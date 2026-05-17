@@ -1,1198 +1,1270 @@
 <!DOCTYPE html>
-
 <html lang="fi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Alias -- Ravintola</title>
+<title>Restaurant Game Night</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink: #1a1008;
-    --cream: #fdf6ec;
-    --gold: #c8922a;
-    --rust: #b94a2c;
-    --sage: #4a6741;
-    --wine: #7b2d3e;
-    --smoke: #e8dfd0;
-    --beer: #d4a820;
-  }
-
+:root {
+  --ink: #1a1008;
+  --cream: #fdf6ec;
+  --gold: #c8922a;
+  --rust: #b94a2c;
+  --sage: #4a6741;
+  --wine: #7b2d3e;
+  --smoke: #e8dfd0;
+  --beer: #d4a820;
+}
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
-background: linear-gradient(180deg, #120d09 0%, #0b0806 100%);
-color: var(--cream);
-font-family: 'DM Sans', sans-serif;
-min-height: 100vh;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-padding: 0.8rem;
-overflow-x: hidden;
+  background: linear-gradient(180deg, #120d09 0%, #0b0806 100%);
+  color: var(--cream);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem;
+  overflow-x: hidden;
 }
-
 body::before {
-content: '';
-position: fixed;
-inset: 0;
-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-pointer-events: none;
-z-index: 0;
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
 }
-
-.container {
-position: relative;
-z-index: 1;
-width: 100%;
-max-width: 480px;
-}
-
+.container { position: relative; z-index: 1; width: 100%; max-width: 480px; }
 .screen { display: none; flex-direction: column; align-items: center; gap: 0.9rem; }
 .screen.active { display: flex; animation: fadeUp 0.4s ease; }
-@keyframes fadeUp {
-from { opacity: 0; transform: translateY(18px); }
-to   { opacity: 1; transform: translateY(0); }
-}
+@keyframes fadeUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
 
+/* LOGO */
 .logo { text-align: center; line-height: 1; }
-.logo-sub {
-font-family: 'DM Sans', sans-serif;
-font-weight: 300;
-font-size: 0.7rem;
-letter-spacing: 0.3em;
-text-transform: uppercase;
-color: var(--gold);
-}
-.logo-title {
-font-family: 'Playfair Display', serif;
-font-size: 3rem;
-font-weight: 700;
-color: var(--cream);
-display: block;
-margin: 0.15em 0;
-}
-.logo-divider {
-display: flex;
-align-items: center;
-gap: 0.5rem;
-justify-content: center;
-font-size: 0.65rem;
-letter-spacing: 0.25em;
-color: var(--smoke);
-opacity: 0.6;
-}
-.logo-divider::before, .logo-divider::after {
-content: '';
-width: 40px;
-height: 1px;
-background: var(--gold);
-opacity: 0.5;
-}
+.logo-sub { font-family:'DM Sans',sans-serif; font-weight:300; font-size:0.7rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--gold); }
+.logo-title { font-family:'Playfair Display',serif; font-size:3rem; font-weight:700; color:var(--cream); display:block; margin:0.15em 0; }
+.logo-divider { display:flex; align-items:center; gap:0.5rem; justify-content:center; font-size:0.65rem; letter-spacing:0.25em; color:var(--smoke); opacity:0.6; }
+.logo-divider::before,.logo-divider::after { content:''; width:40px; height:1px; background:var(--gold); opacity:0.5; }
 
-/* ---- CATEGORY TOGGLES ---- */
-.settings-card {
-background: rgba(255,255,255,0.04);
-border: 1px solid rgba(200,146,42,0.2);
-border-radius: 16px;
-padding: 0.9rem 1rem;
-width: 100%;
+/* MENU GRID */
+.menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; width:100%; }
+.menu-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 1.1rem 0.8rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+  font-family:'DM Sans',sans-serif;
+  color: var(--cream);
 }
-.settings-label {
-font-size: 0.7rem;
-letter-spacing: 0.2em;
-text-transform: uppercase;
-color: var(--gold);
-margin-bottom: 0.8rem;
-}
+.menu-card:hover { background: rgba(200,146,42,0.1); border-color: rgba(200,146,42,0.4); }
+.menu-card .mc-icon { font-size: 1.6rem; }
+.menu-card .mc-title { font-size: 0.9rem; font-weight: 500; }
+.menu-card .mc-desc { font-size: 0.72rem; color: rgba(255,255,255,0.45); line-height:1.3; }
 
-.category-grid {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 0.6rem;
-}
-.cat-toggle {
-display: flex;
-align-items: center;
-gap: 0.6rem;
-padding: 0.65rem 0.9rem;
-border-radius: 10px;
-border: 1.5px solid;
-font-size: 0.82rem;
-font-family: 'DM Sans', sans-serif;
-font-weight: 500;
-cursor: pointer;
-transition: all 0.18s;
-background: transparent;
-user-select: none;
-position: relative;
-}
-.cat-toggle .check {
-width: 16px; height: 16px;
-border-radius: 4px;
-border: 1.5px solid currentColor;
-display: flex; align-items: center; justify-content: center;
-flex-shrink: 0;
-font-size: 0.65rem;
-transition: background 0.15s;
-}
-/* Per-category colours */
-.cat-toggle[data-cat="kokki"]      { border-color: rgba(185,74,44,0.5);  color: #d07060; }
-.cat-toggle[data-cat="tarjoilija"] { border-color: rgba(200,146,42,0.5); color: var(--gold); }
-.cat-toggle[data-cat="baarimikko"] { border-color: rgba(212,143,160,0.5);color: #d48fa0; }
-.cat-toggle[data-cat="juomat"]     { border-color: rgba(212,168,32,0.5); color: var(--beer); }
+/* SETTINGS CARD */
+.settings-card { background:rgba(255,255,255,0.04); border:1px solid rgba(200,146,42,0.2); border-radius:16px; padding:0.9rem 1rem; width:100%; }
+.settings-label { font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:0.8rem; }
 
-.cat-toggle.on[data-cat="kokki"]      { background: rgba(185,74,44,0.18);  border-color: var(--rust); color: #e08878; }
-.cat-toggle.on[data-cat="tarjoilija"] { background: rgba(200,146,42,0.18); border-color: var(--gold); color: var(--gold); }
-.cat-toggle.on[data-cat="baarimikko"] { background: rgba(212,143,160,0.18);border-color: #d48fa0;     color: #d48fa0; }
-.cat-toggle.on[data-cat="juomat"]     { background: rgba(212,168,32,0.18); border-color: var(--beer); color: var(--beer); }
+/* CATEGORY TOGGLES */
+.category-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; }
+.cat-toggle { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.9rem; border-radius:10px; border:1.5px solid; font-size:0.82rem; font-family:'DM Sans',sans-serif; font-weight:500; cursor:pointer; transition:all 0.18s; background:transparent; user-select:none; }
+.cat-toggle .check { width:16px;height:16px;border-radius:4px;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.65rem;transition:background 0.15s; }
+.cat-toggle[data-cat="kokki"]      { border-color:rgba(185,74,44,0.5);  color:#d07060; }
+.cat-toggle[data-cat="tarjoilija"] { border-color:rgba(200,146,42,0.5); color:var(--gold); }
+.cat-toggle[data-cat="baarimikko"] { border-color:rgba(212,143,160,0.5);color:#d48fa0; }
+.cat-toggle[data-cat="juomat"]     { border-color:rgba(212,168,32,0.5); color:var(--beer); }
+.cat-toggle.on[data-cat="kokki"]      { background:rgba(185,74,44,0.18);  border-color:var(--rust); color:#e08878; }
+.cat-toggle.on[data-cat="tarjoilija"] { background:rgba(200,146,42,0.18); border-color:var(--gold); color:var(--gold); }
+.cat-toggle.on[data-cat="baarimikko"] { background:rgba(212,143,160,0.18);border-color:#d48fa0;     color:#d48fa0; }
+.cat-toggle.on[data-cat="juomat"]     { background:rgba(212,168,32,0.18); border-color:var(--beer); color:var(--beer); }
+.cat-toggle.on .check { background:currentColor; }
+.cat-toggle.on .check::after { content:'✓'; color:var(--ink); font-size:0.7rem; font-weight:700; }
+.cat-count { margin-left:auto; font-size:0.65rem; opacity:0.5; }
 
-.cat-toggle.on .check { background: currentColor; }
-.cat-toggle.on .check::after { content: '✓'; color: var(--ink); font-size: 0.7rem; font-weight: 700; }
+/* TIMER / TEAM COUNT */
+.timer-row { display:flex; align-items:center; gap:1rem; }
+.timer-val { font-family:'Playfair Display',serif; font-size:2rem; min-width:2.5rem; text-align:center; }
+.timer-btn,.team-count-btn { width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(200,146,42,0.4);background:transparent;color:var(--gold);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s; }
+.timer-btn:hover,.team-count-btn:hover { background:rgba(200,146,42,0.15); }
+.team-count-row { display:flex;align-items:center;gap:1rem; }
+.team-count-val { font-family:'Playfair Display',serif;font-size:2rem;min-width:1.5rem;text-align:center; }
 
-.cat-toggle.disabled { opacity: 0.35; cursor: default; }
+/* TEAM GRID */
+.teams-grid { display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;width:100%; }
+.team-card { background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:0.8rem;text-align:center;transition:border-color 0.2s; }
+.team-card.active { border-color:var(--gold); }
+.team-name-input { background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.2);color:var(--cream);font-family:'DM Sans',sans-serif;font-size:0.85rem;text-align:center;width:100%;outline:none;padding:0.2rem 0;margin-bottom:0.6rem; }
+.team-score { font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--gold); }
 
-.cat-count {
-margin-left: auto;
-font-size: 0.65rem;
-opacity: 0.5;
-}
+/* BUTTONS */
+.btn-primary { background:var(--gold);color:var(--ink);border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.95rem;letter-spacing:0.05em;padding:0.8rem 1.5rem;cursor:pointer;width:100%;transition:transform 0.15s,opacity 0.15s; }
+.btn-primary:hover { opacity:0.9; transform:translateY(-1px); }
+.btn-primary:active { transform:translateY(0); }
+.btn-primary:disabled { opacity:0.4;cursor:default;transform:none; }
+.btn-secondary { background:transparent;color:var(--smoke);border:1px solid rgba(255,255,255,0.2);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.85rem;padding:0.7rem 1.5rem;cursor:pointer;transition:border-color 0.2s;width:100%; }
+.btn-secondary:hover { border-color:rgba(255,255,255,0.4); }
 
-/* ---- TIMER / TEAM COUNT ---- */
-.timer-row {
-display: flex;
-align-items: center;
-gap: 1rem;
-}
-.timer-val {
-font-family: 'Playfair Display', serif;
-font-size: 2rem;
-min-width: 2.5rem;
-text-align: center;
-}
-.timer-btn {
-width: 36px; height: 36px;
-border-radius: 50%;
-border: 1.5px solid rgba(200,146,42,0.4);
-background: transparent;
-color: var(--gold);
-font-size: 1.2rem;
-cursor: pointer;
-display: flex; align-items: center; justify-content: center;
-transition: all 0.15s;
-}
-.timer-btn:hover { background: rgba(200,146,42,0.15); }
+/* LANG BTNS */
+.lang-btn.active-lang { border-color:var(--gold);color:var(--gold);background:rgba(200,146,42,0.08); }
 
-.team-count-row { display: flex; align-items: center; gap: 1rem; }
-.team-count-btn {
-width: 36px; height: 36px;
-border-radius: 50%;
-border: 1.5px solid rgba(200,146,42,0.4);
-background: transparent;
-color: var(--gold);
-font-size: 1.2rem;
-cursor: pointer;
-display: flex; align-items: center; justify-content: center;
-transition: all 0.15s;
-}
-.team-count-btn:hover { background: rgba(200,146,42,0.15); }
-.team-count-val {
-font-family: 'Playfair Display', serif;
-font-size: 2rem;
-min-width: 1.5rem;
-text-align: center;
-}
+/* GAME HEADER */
+.game-header { display:flex;justify-content:space-between;align-items:center;width:100%; }
+.current-team-badge { background:rgba(200,146,42,0.15);border:1px solid rgba(200,146,42,0.4);border-radius:999px;padding:0.3rem 0.9rem;font-size:0.78rem;color:var(--gold);letter-spacing:0.05em; }
+.cat-badge { font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.4);max-width:100px;text-align:right;line-height:1.4; }
+.timer-ring-wrap { position:relative;width:74px;height:74px;display:flex;align-items:center;justify-content:center; }
+.timer-ring-wrap svg { position:absolute;top:0;left:0;transform:rotate(-90deg); }
+.timer-ring-bg { stroke:rgba(255,255,255,0.08);fill:none;stroke-width:4; }
+.timer-ring-fg { fill:none;stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke 0.5s; }
+.timer-display { font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--cream);position:relative;z-index:1; }
 
-/* ---- TEAM GRID ---- */
-.teams-grid {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 0.75rem;
-width: 100%;
-}
-.team-card {
-background: rgba(255,255,255,0.04);
-border: 1px solid rgba(255,255,255,0.1);
-border-radius: 14px;
-padding: 0.8rem;
-text-align: center;
-transition: border-color 0.2s;
-}
-.team-card.active { border-color: var(--gold); }
-.team-name-input {
-background: transparent;
-border: none;
-border-bottom: 1px solid rgba(255,255,255,0.2);
-color: var(--cream);
-font-family: 'DM Sans', sans-serif;
-font-size: 0.85rem;
-text-align: center;
-width: 100%;
-outline: none;
-padding: 0.2rem 0;
-margin-bottom: 0.6rem;
-}
-.team-score {
-font-family: 'Playfair Display', serif;
-font-size: 1.45rem;
-color: var(--gold);
-}
+/* WORD CARD */
+.word-card { width:100%;background:var(--cream);color:var(--ink);border-radius:20px;padding:1.5rem 1.2rem;text-align:center;position:relative;overflow:hidden;min-height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6rem; }
+.word-card::before { content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(200,146,42,0.08); }
+.word-cat-tag { font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(26,16,8,0.5); }
+.word-cat-tag.kokki      { color:var(--rust); }
+.word-cat-tag.tarjoilija { color:#a07010; }
+.word-cat-tag.baarimikko { color:var(--wine); }
+.word-cat-tag.juomat     { color:#9a6e00; }
+.word-main { font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;line-height:1.1; }
+.word-hint { font-size:0.78rem;color:rgba(26,16,8,0.45);font-style:italic;max-width:85%; }
 
-/* ---- BUTTONS ---- */
-.btn-primary {
-background: var(--gold);
-color: var(--ink);
-border: none;
-border-radius: 12px;
-font-family: 'DM Sans', sans-serif;
-font-weight: 500;
-font-size: 0.95rem;
-letter-spacing: 0.05em;
-padding: 0.8rem 1.5rem;
-cursor: pointer;
-width: 100%;
-transition: transform 0.15s, opacity 0.15s;
-}
-.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-.btn-primary:active { transform: translateY(0); }
-.btn-primary:disabled { opacity: 0.4; cursor: default; transform: none; }
+/* ANSWER ROW */
+.answer-row { display:flex;gap:0.55rem;width:100%; }
+.btn-correct { flex:1;background:var(--sage);color:#fff;border:none;border-radius:14px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:1rem;padding:0.8rem;cursor:pointer;transition:opacity 0.15s;display:flex;align-items:center;justify-content:center;gap:0.4rem; }
+.btn-skip { flex:1;background:rgba(185,74,44,0.2);color:#e08070;border:1px solid rgba(185,74,44,0.3);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:0.9rem;padding:0.8rem;cursor:pointer;transition:opacity 0.15s;display:flex;align-items:center;justify-content:center;gap:0.4rem; }
+.btn-correct:hover,.btn-skip:hover { opacity:0.85; }
+.round-score-row { display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center; }
+.round-chip { padding:0.25rem 0.7rem;border-radius:999px;font-size:0.75rem;border:1px solid; }
+.round-chip.correct  { background:rgba(74,103,65,0.2); border-color:var(--sage);color:#8ab885; }
+.round-chip.skipped  { background:rgba(185,74,44,0.15);border-color:var(--rust);color:#e08070; }
 
-.btn-secondary {
-background: transparent;
-color: var(--smoke);
-border: 1px solid rgba(255,255,255,0.2);
-border-radius: 12px;
-font-family: 'DM Sans', sans-serif;
-font-size: 0.85rem;
-padding: 0.7rem 1.5rem;
-cursor: pointer;
-transition: border-color 0.2s;
-}
-.btn-secondary:hover { border-color: rgba(255,255,255,0.4); }
+/* PODIUM */
+.podium { width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(200,146,42,0.3);border-radius:20px;padding:1.5rem;text-align:center; }
+.podium-label { font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.5rem; }
+.podium-name { font-family:'Playfair Display',serif;font-size:2rem; }
+.podium-score { font-size:0.9rem;color:rgba(255,255,255,0.5); }
+.scores-list { width:100%; }
+.score-row { display:flex;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:0.9rem; }
+.score-row:last-child { border-bottom:none; }
 
-/* ---- GAME SCREEN ---- */
-.game-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-width: 100%;
-}
-.current-team-badge {
-background: rgba(200,146,42,0.15);
-border: 1px solid rgba(200,146,42,0.4);
-border-radius: 999px;
-padding: 0.3rem 0.9rem;
-font-size: 0.78rem;
-color: var(--gold);
-letter-spacing: 0.05em;
-}
-.cat-badge {
-font-size: 0.7rem;
-letter-spacing: 0.15em;
-text-transform: uppercase;
-color: rgba(255,255,255,0.4);
-max-width: 100px;
-text-align: right;
-line-height: 1.4;
-}
+.info-small { font-size:0.75rem;color:rgba(255,255,255,0.35);text-align:center; }
+.warn-small { font-size:0.75rem;color:#e08070;text-align:center; }
 
-.timer-ring-wrap {
-position: relative;
-width: 74px; height: 74px;
-display: flex; align-items: center; justify-content: center;
+/* BIG CARD (used across mini-games) */
+.big-card { width:100%;background:var(--cream);color:var(--ink);border-radius:20px;padding:2rem 1.5rem;text-align:center;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.8rem;position:relative;overflow:hidden; }
+.big-card::before { content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(200,146,42,0.08); }
+.big-card-tag { font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(26,16,8,0.45); }
+.big-card-main { font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;line-height:1.25;max-width:90%; }
+.big-card-sub { font-size:0.8rem;color:rgba(26,16,8,0.5);font-style:italic;max-width:85%; }
+
+/* PROGRESS BAR */
+.progress-bar { width:100%;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden; }
+.progress-fill { height:100%;background:var(--gold);border-radius:2px;transition:width 0.3s; }
+
+/* CHARADES gesture display */
+.gesture-display { font-size:3rem;text-align:center;margin:0.5rem 0; }
+
+/* HOT SEAT player chips */
+.player-chips { display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;width:100%; }
+.player-chip { padding:0.5rem 1rem;border-radius:999px;border:2px solid rgba(255,255,255,0.2);font-size:0.85rem;cursor:pointer;transition:all 0.15s;user-select:none; }
+.player-chip.voted { border-color:var(--gold);background:rgba(200,146,42,0.2);color:var(--gold); }
+
+/* NHIE drink indicator */
+.drink-track { display:flex;gap:0.4rem;flex-wrap:wrap;justify-content:center; }
+.drink-dot { width:24px;height:24px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);font-size:0.9rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s; }
+.drink-dot.filled { border-color:var(--beer); }
+
+@media (max-height:850px) {
+  body { justify-content:flex-start; }
+  .container { max-width:430px; }
+  .settings-card { padding:0.75rem 0.9rem; }
+  .logo-title { font-size:2.6rem; }
+  .word-main { font-size:1.65rem; }
+  .word-card { min-height:115px;padding:1.2rem 1rem; }
+  .btn-primary,.btn-secondary,.btn-correct,.btn-skip { padding-top:0.75rem;padding-bottom:0.75rem; }
 }
-.timer-ring-wrap svg {
-position: absolute; top: 0; left: 0;
-transform: rotate(-90deg);
-}
-.timer-ring-bg { stroke: rgba(255,255,255,0.08); fill: none; stroke-width: 4; }
-.timer-ring-fg { fill: none; stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.5s; }
-.timer-display {
-font-family: 'Playfair Display', serif;
-font-size: 1.45rem;
-color: var(--cream);
-position: relative; z-index: 1;
-}
-
-.word-card {
-width: 100%;
-background: var(--cream);
-color: var(--ink);
-border-radius: 20px;
-padding: 1.5rem 1.2rem;
-text-align: center;
-position: relative;
-overflow: hidden;
-min-height: 130px;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-gap: 0.6rem;
-}
-.word-card::before {
-content: '';
-position: absolute;
-top: -20px; right: -20px;
-width: 100px; height: 100px;
-border-radius: 50%;
-background: rgba(200,146,42,0.08);
-}
-.word-cat-tag {
-font-size: 0.65rem;
-letter-spacing: 0.25em;
-text-transform: uppercase;
-color: rgba(26,16,8,0.5);
-}
-.word-cat-tag.kokki      { color: var(--rust); }
-.word-cat-tag.tarjoilija { color: #a07010; }
-.word-cat-tag.baarimikko { color: var(--wine); }
-.word-cat-tag.juomat     { color: #9a6e00; }
-.word-main {
-font-family: 'Playfair Display', serif;
-font-size: 1.45rem;
-font-weight: 700;
-line-height: 1.1;
-}
-.word-hint {
-font-size: 0.78rem;
-color: rgba(26,16,8,0.45);
-font-style: italic;
-max-width: 85%;
-}
-
-.answer-row { display: flex; gap: 0.55rem; width: 100%; }
-.btn-correct {
-flex: 1;
-background: var(--sage);
-color: #fff;
-border: none;
-border-radius: 14px;
-font-family: 'DM Sans', sans-serif;
-font-weight: 500;
-font-size: 1rem;
-padding: 0.8rem;
-cursor: pointer;
-transition: opacity 0.15s;
-display: flex; align-items: center; justify-content: center; gap: 0.4rem;
-}
-.btn-skip {
-flex: 1;
-background: rgba(185,74,44,0.2);
-color: #e08070;
-border: 1px solid rgba(185,74,44,0.3);
-border-radius: 14px;
-font-family: 'DM Sans', sans-serif;
-font-size: 0.9rem;
-padding: 0.8rem;
-cursor: pointer;
-transition: opacity 0.15s;
-display: flex; align-items: center; justify-content: center; gap: 0.4rem;
-}
-.btn-correct:hover, .btn-skip:hover { opacity: 0.85; }
-
-.round-score-row { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
-.round-chip { padding: 0.25rem 0.7rem; border-radius: 999px; font-size: 0.75rem; border: 1px solid; }
-.round-chip.correct  { background: rgba(74,103,65,0.2);  border-color: var(--sage); color: #8ab885; }
-.round-chip.skipped  { background: rgba(185,74,44,0.15); border-color: var(--rust); color: #e08070; }
-
-.podium {
-width: 100%;
-background: rgba(255,255,255,0.04);
-border: 1px solid rgba(200,146,42,0.3);
-border-radius: 20px;
-padding: 1.5rem;
-text-align: center;
-}
-.podium-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
-.podium-name { font-family: 'Playfair Display', serif; font-size: 2rem; }
-.podium-score { font-size: 0.9rem; color: rgba(255,255,255,0.5); }
-.scores-list { width: 100%; }
-.score-row { display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.9rem; }
-.score-row:last-child { border-bottom: none; }
-
-.info-small { font-size: 0.75rem; color: rgba(255,255,255,0.35); text-align: center; }
-.warn-small { font-size: 0.75rem; color: #e08070; text-align: center; }
-
-@media (max-height: 850px) {
-  body {
-    justify-content: flex-start;
-  }
-
-  .container {
-    max-width: 430px;
-  }
-
-  .settings-card {
-    padding: 0.75rem 0.9rem;
-  }
-
-  .logo-title {
-    font-size: 2.6rem;
-  }
-
-  .word-main {
-    font-size: 1.65rem;
-  }
-
-  .word-card {
-    min-height: 115px;
-    padding: 1.2rem 1rem;
-  }
-
-  .btn-primary,
-  .btn-secondary,
-  .btn-correct,
-  .btn-skip {
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-  }
-}
-
-
-button {
-  touch-action: manipulation;
-}
-
-
-.lang-btn.active-lang {
-  border-color: var(--gold);
-  color: var(--gold);
-  background: rgba(200,146,42,0.08);
-}
+button { touch-action:manipulation; }
 </style>
-
 </head>
 <body>
 <div class="container">
 
-  <!-- GAME MENU -->
-
-  <div class="screen active" id="screen-menu">
-    <div class="logo">
-      <span class="logo-sub">Restaurant party games</span>
-      <span class="logo-title">Game Night</span>
-      <div class="logo-divider">choose a game</div>
-    </div>
-
-    <div class="teams-grid" style="grid-template-columns:1fr;">
-      <button class="team-card" id="btn-open-alias" style="cursor:pointer;background:rgba(200,146,42,0.08);">
-        <div style="font-size:1.1rem;margin-bottom:0.4rem;">🎭 Alias</div>
-        <div style="font-size:0.8rem;color:rgba(255,255,255,0.5)">Describe words to your team</div>
-      </button>
-
-      <button class="team-card" id="btn-open-quiz" style="cursor:pointer;">
-        <div style="font-size:1.1rem;margin-bottom:0.4rem;">🧠 Tietovisa / Quiz</div>
-        <div style="font-size:0.8rem;color:rgba(255,255,255,0.5)">Coming soon</div>
-      </button>
-    </div>
+<!-- ====== MAIN MENU ====== -->
+<div class="screen active" id="screen-menu">
+  <div class="logo">
+    <span class="logo-sub">Restaurant party games</span>
+    <span class="logo-title">Game Night</span>
+    <div class="logo-divider">choose a game</div>
   </div>
-
-
-  <!-- START SCREEN -->
-
-  <div class="screen" id="screen-start">
-    <div class="logo">
-      <span class="logo-sub">Selitä se sanoin</span>
-      <span class="logo-title">Alias</span>
-      <div class="logo-divider">ravintola-edition</div>
-
-    <div style="display:flex;gap:0.5rem;justify-content:center;margin-top:1rem;">
-      <button class="btn-secondary lang-btn active-lang" data-lang="fi">🇫🇮 Suomi</button>
-      <button class="btn-secondary lang-btn" data-lang="en">🇬🇧 English</button>
-    </div>
-    </div>
-
-```
-<div class="settings-card">
-  <div class="settings-label">Kategoriat</div>
-  <div class="category-grid">
-    <button class="cat-toggle on" data-cat="kokki">
-      <span class="check"></span>👨‍🍳 Kokki
-      <span class="cat-count" id="count-kokki"></span>
+  <div style="display:flex;gap:0.5rem;justify-content:center;width:100%;">
+    <button class="btn-secondary lang-btn active-lang" data-lang="fi" style="width:auto;padding:0.5rem 1rem;">🇫🇮 Suomi</button>
+    <button class="btn-secondary lang-btn"              data-lang="en" style="width:auto;padding:0.5rem 1rem;">🇬🇧 English</button>
+  </div>
+  <div class="menu-grid">
+    <button class="menu-card" id="btn-open-alias">
+      <span class="mc-icon">🎭</span>
+      <span class="mc-title">Alias</span>
+      <span class="mc-desc" data-fi="Selitä sanoja tiimillesi" data-en="Describe words to your team">Selitä sanoja tiimillesi</span>
     </button>
-    <button class="cat-toggle on" data-cat="tarjoilija">
-      <span class="check"></span>🍽 Tarjoilija
-      <span class="cat-count" id="count-tarjoilija"></span>
+    <button class="menu-card" id="btn-open-charades">
+      <span class="mc-icon">🤫</span>
+      <span class="mc-title">Charades</span>
+      <span class="mc-desc" data-fi="Alias mutta vain eleillä" data-en="Alias but only with gestures">Alias mutta vain eleillä</span>
     </button>
-    <button class="cat-toggle on" data-cat="baarimikko">
-      <span class="check"></span>🍸 Baarimikko
-      <span class="cat-count" id="count-baarimikko"></span>
+    <button class="menu-card" id="btn-open-nhie">
+      <span class="mc-icon">🍺</span>
+      <span class="mc-title" data-fi="En ole koskaan" data-en="Never Have I Ever">En ole koskaan</span>
+      <span class="mc-desc" data-fi="Ravintolaversio" data-en="Restaurant edition">Ravintolaversio</span>
     </button>
-    <button class="cat-toggle on" data-cat="juomat">
-      <span class="check"></span>🍺 Juomat
-      <span class="cat-count" id="count-juomat"></span>
+    <button class="menu-card" id="btn-open-complaint">
+      <span class="mc-icon">📞</span>
+      <span class="mc-title" data-fi="Asiakas on aina oikeassa" data-en="Customer is Always Right">Asiakas on aina oikeassa</span>
+      <span class="mc-desc" data-fi="Keksi paras vastaus" data-en="Craft the best response">Keksi paras vastaus</span>
+    </button>
+    <button class="menu-card" id="btn-open-hotseat" style="grid-column:1/-1;">
+      <span class="mc-icon">🔥</span>
+      <span class="mc-title">Hot Seat</span>
+      <span class="mc-desc" data-fi="Kuka teistä olisi...?" data-en="Who among you would...?">Kuka teistä olisi...?</span>
     </button>
   </div>
 </div>
 
-<div class="settings-card">
-  <div class="settings-label">Kierroksen aika</div>
-  <div class="timer-row">
-    <button class="timer-btn" id="timer-minus">−</button>
-    <span class="timer-val" id="timer-val">60</span>
-    <span style="font-size:0.8rem;color:rgba(255,255,255,0.4);">s</span>
-    <button class="timer-btn" id="timer-plus">+</button>
+<!-- ====== ALIAS: START ====== -->
+<div class="screen" id="screen-start">
+  <div class="logo">
+    <span class="logo-sub" id="alias-sub">Selitä se sanoin</span>
+    <span class="logo-title">Alias</span>
+    <div class="logo-divider" id="alias-edition">ravintola-edition</div>
   </div>
+  <div class="settings-card">
+    <div class="settings-label" id="lbl-categories">Kategoriat</div>
+    <div class="category-grid">
+      <button class="cat-toggle on" data-cat="kokki"><span class="check"></span><span class="cat-label" data-fi="👨‍🍳 Kokki" data-en="👨‍🍳 Kitchen">👨‍🍳 Kokki</span><span class="cat-count" id="count-kokki"></span></button>
+      <button class="cat-toggle on" data-cat="tarjoilija"><span class="check"></span><span class="cat-label" data-fi="🍽 Tarjoilija" data-en="🍽 Service">🍽 Tarjoilija</span><span class="cat-count" id="count-tarjoilija"></span></button>
+      <button class="cat-toggle on" data-cat="baarimikko"><span class="check"></span><span class="cat-label" data-fi="🍸 Baarimikko" data-en="🍸 Bar">🍸 Baarimikko</span><span class="cat-count" id="count-baarimikko"></span></button>
+      <button class="cat-toggle on" data-cat="juomat"><span class="check"></span><span class="cat-label" data-fi="🍺 Juomat" data-en="🍺 Drinks">🍺 Juomat</span><span class="cat-count" id="count-juomat"></span></button>
+    </div>
+  </div>
+  <div class="settings-card">
+    <div class="settings-label" id="lbl-round-time">Kierroksen aika</div>
+    <div class="timer-row">
+      <button class="timer-btn" id="timer-minus">−</button>
+      <span class="timer-val" id="timer-val">60</span>
+      <span style="font-size:0.8rem;color:rgba(255,255,255,0.4);">s</span>
+      <button class="timer-btn" id="timer-plus">+</button>
+    </div>
+  </div>
+  <div class="settings-card">
+    <div class="settings-label" id="lbl-teams">Tiimien määrä</div>
+    <div class="team-count-row">
+      <button class="team-count-btn" id="team-count-minus">−</button>
+      <span class="team-count-val" id="team-count-val">2</span>
+      <button class="team-count-btn" id="team-count-plus">+</button>
+      <span style="font-size:0.8rem;color:rgba(255,255,255,0.4);" id="lbl-teams-unit">tiimiä</span>
+    </div>
+  </div>
+  <div class="teams-grid" id="teams-grid"></div>
+  <button class="btn-primary" id="btn-start">Aloita peli</button>
+  <button class="btn-secondary back-to-menu">← <span data-fi="Valikko" data-en="Menu">Valikko</span></button>
+  <p class="info-small" id="start-info">Selittäjä kuvailee sanaa — ei saa sanoa itse sanaa!</p>
 </div>
 
-<div class="settings-card">
-  <div class="settings-label">Tiimien määrä</div>
-  <div class="team-count-row">
-    <button class="team-count-btn" id="team-count-minus">−</button>
-    <span class="team-count-val" id="team-count-val">2</span>
-    <button class="team-count-btn" id="team-count-plus">+</button>
-    <span style="font-size:0.8rem;color:rgba(255,255,255,0.4);">tiimiä</span>
+<!-- ====== ALIAS: GAME ====== -->
+<div class="screen" id="screen-game">
+  <div class="game-header">
+    <div class="current-team-badge" id="current-team-badge">Tiimi 1</div>
+    <div class="timer-ring-wrap">
+      <svg width="74" height="74" viewBox="0 0 90 90">
+        <circle class="timer-ring-bg" cx="45" cy="45" r="40"/>
+        <circle class="timer-ring-fg" id="timer-ring" cx="45" cy="45" r="40" stroke-dasharray="251.2" stroke-dashoffset="0" stroke="#c8922a"/>
+      </svg>
+      <span class="timer-display" id="timer-display">60</span>
+    </div>
+    <div class="cat-badge" id="cat-badge">KAIKKI</div>
   </div>
+  <div class="word-card" id="word-card">
+    <span class="word-cat-tag" id="word-cat-tag"></span>
+    <span class="word-main" id="word-main">—</span>
+    <span class="word-hint" id="word-hint"></span>
+  </div>
+  <div class="answer-row">
+    <button class="btn-correct" id="btn-correct">✓ Oikein</button>
+    <button class="btn-skip" id="btn-skip">↷ Ohita</button>
+  </div>
+  <div class="round-score-row" id="round-chips"></div>
+  <button class="btn-secondary" id="btn-end-round">Lopeta kierros</button>
 </div>
 
-<div class="teams-grid" id="teams-grid"></div>
-
-<button class="btn-primary" id="btn-start">Aloita peli</button>
-<button class="btn-secondary" id="btn-back-menu">← Back</button>
-<p class="info-small" id="start-info">Selittäjä kuvailee sanaa — ei saa sanoa itse sanaa!</p>
-```
-
+<!-- ====== ALIAS: RESULT ====== -->
+<div class="screen" id="screen-result">
+  <div class="logo">
+    <span class="logo-sub" id="lbl-round-over">Kierros ohi</span>
+    <span class="logo-title" style="font-size:2.5rem" id="result-team-name">Tiimi 1</span>
   </div>
-
-  <!-- GAME SCREEN -->
-
-  <div class="screen" id="screen-game">
-    <div class="game-header">
-      <div class="current-team-badge" id="current-team-badge">Tiimi 1</div>
-      <div class="timer-ring-wrap">
-        <svg width="74" height="74" viewBox="0 0 90 90">
-          <circle class="timer-ring-bg" cx="45" cy="45" r="40"/>
-          <circle class="timer-ring-fg" id="timer-ring" cx="45" cy="45" r="40"
-            stroke-dasharray="251.2" stroke-dashoffset="0" stroke="#c8922a"/>
-        </svg>
-        <span class="timer-display" id="timer-display">60</span>
-      </div>
-      <div class="cat-badge" id="cat-badge">KAIKKI</div>
-    </div>
-
-```
-<div class="word-card" id="word-card">
-  <span class="word-cat-tag" id="word-cat-tag"></span>
-  <span class="word-main" id="word-main">—</span>
-  <span class="word-hint" id="word-hint"></span>
+  <div class="settings-card" style="text-align:center">
+    <div class="settings-label" id="lbl-round-pts">Pisteet tällä kierroksella</div>
+    <div style="font-family:'Playfair Display',serif;font-size:3rem;color:var(--gold)" id="result-pts">0</div>
+    <div id="result-breakdown" style="font-size:0.8rem;color:rgba(255,255,255,0.4);margin-top:0.4rem"></div>
+  </div>
+  <div class="teams-grid" id="result-scores"></div>
+  <button class="btn-primary" id="btn-next-team">Seuraava tiimi →</button>
+  <button class="btn-secondary" id="btn-end-game">Lopeta peli</button>
 </div>
 
-<div class="answer-row">
-  <button class="btn-correct" id="btn-correct">✓ Oikein</button>
-  <button class="btn-skip" id="btn-skip">↷ Ohita</button>
+<!-- ====== ALIAS: END ====== -->
+<div class="screen" id="screen-end">
+  <div class="logo">
+    <span class="logo-sub" id="lbl-game-over">Peli päättyi</span>
+    <span class="logo-title" style="font-size:2.5rem" id="lbl-final-scores">Lopputulos</span>
+  </div>
+  <div class="podium">
+    <div class="podium-label" id="lbl-winner">🏆 Voittaja</div>
+    <div class="podium-name" id="winner-name">—</div>
+    <div class="podium-score" id="winner-score"></div>
+  </div>
+  <div class="scores-list" id="final-scores-list"></div>
+  <button class="btn-primary" id="btn-restart">Pelaa uudelleen</button>
+  <button class="btn-secondary back-to-menu">← <span data-fi="Valikko" data-en="Menu">Valikko</span></button>
 </div>
 
-<div class="round-score-row" id="round-chips"></div>
-<button class="btn-secondary" id="btn-end-round">Lopeta kierros</button>
-```
-
+<!-- ====== CHARADES ====== -->
+<div class="screen" id="screen-charades">
+  <div class="game-header">
+    <div class="current-team-badge" id="charades-team-badge">Tiimi 1</div>
+    <div class="timer-ring-wrap">
+      <svg width="74" height="74" viewBox="0 0 90 90">
+        <circle class="timer-ring-bg" cx="45" cy="45" r="40"/>
+        <circle class="timer-ring-fg" id="charades-ring" cx="45" cy="45" r="40" stroke-dasharray="251.2" stroke-dashoffset="0" stroke="#c8922a"/>
+      </svg>
+      <span class="timer-display" id="charades-timer">60</span>
+    </div>
+    <div class="cat-badge">🤫</div>
   </div>
-
-  <!-- ROUND RESULT -->
-
-  <div class="screen" id="screen-result">
-    <div class="logo">
-      <span class="logo-sub">Kierros ohi</span>
-      <span class="logo-title" style="font-size:2.5rem" id="result-team-name">Tiimi 1</span>
-    </div>
-    <div class="settings-card" style="text-align:center">
-      <div class="settings-label">Pisteet tällä kierroksella</div>
-      <div style="font-family:'Playfair Display',serif;font-size:3rem;color:var(--gold)" id="result-pts">0</div>
-      <div id="result-breakdown" style="font-size:0.8rem;color:rgba(255,255,255,0.4);margin-top:0.4rem"></div>
-    </div>
-    <div class="teams-grid" id="result-scores"></div>
-    <button class="btn-primary" id="btn-next-team">Seuraava tiimi →</button>
-    <button class="btn-secondary" id="btn-end-game">Lopeta peli</button>
+  <div class="big-card" id="charades-card">
+    <span class="big-card-tag" id="charades-cat-tag"></span>
+    <div class="gesture-display">🤫</div>
+    <span class="big-card-main" id="charades-word">—</span>
+    <span class="big-card-sub" id="charades-hint"></span>
   </div>
-
-
-  <!-- QUIZ SCREEN -->
-
-  <div class="screen" id="screen-quiz">
-    <div class="logo">
-      <span class="logo-sub">Quiz game</span>
-      <span class="logo-title" style="font-size:2.5rem">Coming Soon</span>
-    </div>
-
-    <div class="settings-card" style="text-align:center">
-      <div style="font-size:1rem;margin-bottom:0.7rem;">🧠</div>
-      <div style="font-size:0.9rem;color:rgba(255,255,255,0.65);line-height:1.5">
-        Tietovisa-pelitila on vielä työn alla.<br><br>
-        The quiz mode is still in development.
-      </div>
-    </div>
-
-    <button class="btn-secondary" id="btn-quiz-back">← Back</button>
+  <div class="answer-row">
+    <button class="btn-correct" id="charades-correct">✓ <span data-fi="Oikein" data-en="Correct">Oikein</span></button>
+    <button class="btn-skip" id="charades-skip">↷ <span data-fi="Ohita" data-en="Skip">Ohita</span></button>
   </div>
-
-
-  <!-- END SCREEN -->
-
-  <div class="screen" id="screen-end">
-    <div class="logo">
-      <span class="logo-sub">Peli päättyi</span>
-      <span class="logo-title" style="font-size:2.5rem">Lopputulos</span>
-    </div>
-    <div class="podium">
-      <div class="podium-label">🏆 Voittaja</div>
-      <div class="podium-name" id="winner-name">—</div>
-      <div class="podium-score" id="winner-score"></div>
-    </div>
-    <div class="scores-list" id="final-scores-list"></div>
-    <button class="btn-primary" id="btn-restart">Pelaa uudelleen</button>
-  </div>
-
+  <div class="round-score-row" id="charades-chips"></div>
+  <button class="btn-secondary" id="charades-end">← <span data-fi="Lopeta kierros" data-en="End round">Lopeta kierros</span></button>
 </div>
+
+<!-- ====== CHARADES: SETUP ====== -->
+<div class="screen" id="screen-charades-setup">
+  <div class="logo">
+    <span class="logo-sub" data-fi="Ei puhumista" data-en="No talking">Ei puhumista</span>
+    <span class="logo-title">Charades</span>
+    <div class="logo-divider" data-fi="ravintola-edition" data-en="restaurant edition">ravintola-edition</div>
+  </div>
+  <div class="settings-card">
+    <div class="settings-label" id="lbl-ch-timer">Kierroksen aika</div>
+    <div class="timer-row">
+      <button class="timer-btn" id="ch-timer-minus">−</button>
+      <span class="timer-val" id="ch-timer-val">60</span>
+      <span style="font-size:0.8rem;color:rgba(255,255,255,0.4);">s</span>
+      <button class="timer-btn" id="ch-timer-plus">+</button>
+    </div>
+  </div>
+  <div class="settings-card">
+    <div class="settings-label" id="lbl-ch-teams">Tiimien määrä</div>
+    <div class="team-count-row">
+      <button class="team-count-btn" id="ch-count-minus">−</button>
+      <span class="team-count-val" id="ch-count-val">2</span>
+      <button class="team-count-btn" id="ch-count-plus">+</button>
+      <span style="font-size:0.8rem;color:rgba(255,255,255,0.4);" id="lbl-ch-unit">tiimiä</span>
+    </div>
+  </div>
+  <div class="teams-grid" id="ch-teams-grid"></div>
+  <button class="btn-primary" id="btn-ch-start">Aloita</button>
+  <button class="btn-secondary back-to-menu">← <span data-fi="Valikko" data-en="Menu">Valikko</span></button>
+  <p class="info-small" data-fi="Vain eleet — ei sanoja, ei ääniä!" data-en="Gestures only — no words, no sounds!">Vain eleet — ei sanoja, ei ääniä!</p>
+</div>
+
+<!-- ====== NHIE ====== -->
+<div class="screen" id="screen-nhie">
+  <div class="logo">
+    <span class="logo-sub" data-fi="Ravintolaversio" data-en="Restaurant edition">Ravintolaversio</span>
+    <span class="logo-title" style="font-size:2rem;" id="lbl-nhie-title">En ole koskaan</span>
+    <div class="logo-divider">Never Have I Ever</div>
+  </div>
+  <div class="big-card" id="nhie-card">
+    <span class="big-card-tag" id="nhie-tag">🍺</span>
+    <span class="big-card-main" id="nhie-text">—</span>
+  </div>
+  <div class="progress-bar" style="margin-top:0.2rem"><div class="progress-fill" id="nhie-progress" style="width:0%"></div></div>
+  <p class="info-small" id="nhie-counter">1 / 40</p>
+  <button class="btn-primary" id="nhie-next">Seuraava →</button>
+  <button class="btn-secondary back-to-menu">← <span data-fi="Valikko" data-en="Menu">Valikko</span></button>
+</div>
+
+<!-- ====== COMPLAINT ====== -->
+<div class="screen" id="screen-complaint">
+  <div class="logo">
+    <span class="logo-sub" data-fi="Keksi paras vastaus" data-en="Craft the best response">Keksi paras vastaus</span>
+    <span class="logo-title" style="font-size:1.7rem" id="lbl-complaint-title">Asiakas on aina oikeassa</span>
+  </div>
+  <div class="big-card" id="complaint-card">
+    <span class="big-card-tag" id="complaint-tag">📞 <span data-fi="Reklamaatio" data-en="Complaint">Reklamaatio</span></span>
+    <span class="big-card-main" id="complaint-text">—</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="complaint-progress" style="width:0%"></div></div>
+  <p class="info-small" id="complaint-counter">1 / 30</p>
+  <p class="info-small" id="complaint-rule" data-fi="Keksi hyvä asiakaspalveluvastaus — paras voittaa pisteen!" data-en="Come up with a great customer service response — best one wins a point!">Keksi hyvä asiakaspalveluvastaus — paras voittaa pisteen!</p>
+  <button class="btn-primary" id="complaint-next">Seuraava →</button>
+  <button class="btn-secondary back-to-menu">← <span data-fi="Valikko" data-en="Menu">Valikko</span></button>
+</div>
+
+<!-- ====== HOT SEAT: SETUP ====== -->
+<div class="screen" id="screen-hotseat-setup">
+  <div class="logo">
+    <span class="logo-sub" data-fi="Kuka teistä?" data-en="Which one of you?">Kuka teistä?</span>
+    <span class="logo-title">Hot Seat</span>
+    <div class="logo-divider">🔥</div>
+  </div>
+  <div class="settings-card">
+    <div class="settings-label" id="lbl-hs-players">Pelaajien nimet</div>
+    <p class="info-small" style="margin-bottom:0.6rem" data-fi="Lisää 2–8 pelaajaa" data-en="Add 2–8 players">Lisää 2–8 pelaajaa</p>
+    <div id="hs-name-list" style="display:flex;flex-direction:column;gap:0.5rem;"></div>
+    <button class="btn-secondary" id="hs-add-player" style="margin-top:0.6rem;padding:0.5rem;">+ <span data-fi="Lisää pelaaja" data-en="Add player">Lisää pelaaja</span></button>
+  </div>
+  <button class="btn-primary" id="btn-hs-start">Aloita 🔥</button>
+  <button class="btn-secondary back-to-menu">← <span data-fi="Valikko" data-en="Menu">Valikko</span></button>
+</div>
+
+<!-- ====== HOT SEAT: GAME ====== -->
+<div class="screen" id="screen-hotseat">
+  <div class="logo">
+    <span class="logo-sub" data-fi="Osoita yhtä aikaa!" data-en="Point at the same time!">Osoita yhtä aikaa!</span>
+    <span class="logo-title">Hot Seat</span>
+    <div class="logo-divider">🔥</div>
+  </div>
+  <div class="big-card" id="hs-card">
+    <span class="big-card-tag">🔥 Hot Seat</span>
+    <span class="big-card-main" id="hs-question">—</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="hs-progress" style="width:0%"></div></div>
+  <p class="info-small" id="hs-counter">1 / 30</p>
+  <p class="info-small" id="hs-rule" data-fi="Kaikki osoittavat yhtä pelaajaa samanaikaisesti" data-en="Everyone points to one player at the same time">Kaikki osoittavat yhtä pelaajaa samanaikaisesti</p>
+  <div class="player-chips" id="hs-player-chips"></div>
+  <button class="btn-primary" id="hs-next">Seuraava →</button>
+  <button class="btn-secondary back-to-menu">← <span data-fi="Valikko" data-en="Menu">Valikko</span></button>
+</div>
+
+</div><!-- /container -->
 
 <script>
-// ======================== WORD BANK ========================
+// ======================== WORD BANK (Alias + Charades) ========================
 const words = {
   kokki: [
-    { word: "Mise en place",     hint: "Kaikki valmiiksi ennen kokkaamista" },
-    { word: "Blanseerata",       hint: "Upottaa kiehuvaan veteen hetkeksi" },
-    { word: "Redusoiminen",      hint: "Kastikkeen keittäminen kokoon" },
-    { word: "Julienn",           hint: "Ohuet tikkumaiset viipaleet" },
-    { word: "Brunoise",          hint: "Erittäin pieneksi kuutioiksi leikkaaminen" },
-    { word: "Roux",              hint: "Voin ja jauhon seos kastikkeeseen" },
-    { word: "Temperoida",        hint: "Suklaan lämpötilojen hallinta" },
-    { word: "Marinoida",         hint: "Liottaa mausteliemessä ennen kypsennystä" },
-    { word: "Emulsoida",         hint: "Sekoittaa normaalisti sekoittumattomat aineet" },
-    { word: "Konfit",            hint: "Rasvassa matalassa lämpötilassa kypsyttäminen" },
-    { word: "Sauté",             hint: "Kuumassa pannussa nopeasti paistaminen" },
-    { word: "Déglacer",          hint: "Nestettä pannun pohjaantarttumien irrottamiseksi" },
-    { word: "Gratinoida",        hint: "Juusto tai korppujauho päälle ja uuniin" },
-    { word: "Al dente",          hint: "Pasta jossa vielä puruvastus" },
-    { word: "Tikku-ukko",        hint: "Testi, jolla kokeillaan onko kakku kypsä" },
-    { word: "Leikkuulauta",      hint: "Kokin perustyökalu pilkkomiseen" },
-    { word: "Mandoliini",        hint: "Vihannesleikkuri terä-alustalla" },
-    { word: "Kuorrutus",         hint: "Kakun pintaan laitettava suklaapeite" },
-    { word: "Spachtel",          hint: "Litteä lastanmuotoinen kokkaustyökalu" },
-    { word: "Bain-marie",        hint: "Vesihauteessa valmistaminen" },
-    { word: "Chefin veitsi",     hint: "Kokin tärkein ja monikäyttöisin työkalu" },
-    { word: "Lisuke",            hint: "Pääruuan kylkeen tarjottava komponentti" },
-    { word: "Vakuumi",           hint: "Ilmatiivistetty pussi kypsennystä varten" },
-    { word: "Sous vide",         hint: "Matalan lämpötilan vesikylpy kypsennys" },
-    { word: "Pinssit",           hint: "Kokin tarkkuustyökalu lautaselle asetteluun" },
+    { word:"Mise en place", hint:"Kaikki valmiiksi ennen kokkaamista" },
+    { word:"Blanseerata",   hint:"Upottaa kiehuvaan veteen hetkeksi" },
+    { word:"Redusoiminen",  hint:"Kastikkeen keittäminen kokoon" },
+    { word:"Julienn",       hint:"Ohuet tikkumaiset viipaleet" },
+    { word:"Brunoise",      hint:"Erittäin pieneksi kuutioiksi leikkaaminen" },
+    { word:"Roux",          hint:"Voin ja jauhon seos kastikkeeseen" },
+    { word:"Temperoida",    hint:"Suklaan lämpötilojen hallinta" },
+    { word:"Marinoida",     hint:"Liottaa mausteliemessä ennen kypsennystä" },
+    { word:"Emulsoida",     hint:"Sekoittaa normaalisti sekoittumattomat aineet" },
+    { word:"Konfit",        hint:"Rasvassa matalassa lämpötilassa kypsyttäminen" },
+    { word:"Sauté",         hint:"Kuumassa pannussa nopeasti paistaminen" },
+    { word:"Déglacer",      hint:"Nestettä pannun pohjaantarttumien irrottamiseksi" },
+    { word:"Gratinoida",    hint:"Juusto tai korppujauho päälle ja uuniin" },
+    { word:"Al dente",      hint:"Pasta jossa vielä puruvastus" },
+    { word:"Tikku-ukko",    hint:"Testi, jolla kokeillaan onko kakku kypsä" },
+    { word:"Leikkuulauta",  hint:"Kokin perustyökalu pilkkomiseen" },
+    { word:"Mandoliini",    hint:"Vihannesleikkuri terä-alustalla" },
+    { word:"Kuorrutus",     hint:"Kakun pintaan laitettava suklaapeite" },
+    { word:"Spachtel",      hint:"Litteä lastanmuotoinen kokkaustyökalu" },
+    { word:"Bain-marie",    hint:"Vesihauteessa valmistaminen" },
+    { word:"Chefin veitsi", hint:"Kokin tärkein ja monikäyttöisin työkalu" },
+    { word:"Lisuke",        hint:"Pääruuan kylkeen tarjottava komponentti" },
+    { word:"Vakuumi",       hint:"Ilmatiivistetty pussi kypsennystä varten" },
+    { word:"Sous vide",     hint:"Matalan lämpötilan vesikylpy kypsennys" },
+    { word:"Pinssit",       hint:"Kokin tarkkuustyökalu lautaselle asetteluun" },
   ],
   tarjoilija: [
-    { word: "Mise en place",     hint: "Kaikki valmiina ennen salin avaamista" },
-    { word: "Kattaus",           hint: "Pöytäliinat, lautaset ja aterimet paikoillaan" },
-    { word: "Kassavirhe",        hint: "Rahat eivät täsmää päivän päätteeksi" },
-    { word: "Specials",          hint: "Tänään tarjolla olevat erikoisruuat" },
-    { word: "Apertivo",          hint: "Pieni alkoholi tai mehu ennen ruokaa" },
-    { word: "Digestif",          hint: "Ruokailun jälkeen nautittava vahva juoma" },
-    { word: "Allergiakysely",    hint: "Tarjoilija varmistaa ruokarajoitteet" },
-    { word: "Lisämyynti",        hint: "Suositella asiakkaalle lisää tilattavaa" },
-    { word: "Käteinen",          hint: "Maksetaan seteillä ja kolikoilla" },
-    { word: "Buffet",            hint: "Itsepoiminta-tyyppinen ruokailutapa" },
-    { word: "Tilauspadi",        hint: "Paperinen tai digitaalinen tilauslista" },
-    { word: "Reklamaatio",       hint: "Asiakas valittaa ruuasta tai palvelusta" },
-    { word: "Juomaraha",         hint: "Ylimääräinen maksu hyvästä palvelusta" },
-    { word: "Reservointi",       hint: "Pöydän varaaminen etukäteen" },
-    { word: "Päivän lounas",     hint: "Edullinen arkiruoka vaihtuvalla listalla" },
-    { word: "Tarjoilupyyhe",     hint: "Valkoinen liina tarjoilijan olkapäällä" },
-    { word: "Korkkimaksu",       hint: "Maksu oman viinin tuomisesta ravintolaan" },
-    { word: "Floor manager",     hint: "Salin esimies, joka koordinoi palvelua" },
-    { word: "Kierros",           hint: "Yksi lenkki pöydistä tarkistamassa asiakkaat" },
-    { word: "Kansi",             hint: "Yksi asiakas = yksi tämä ravintolan kielellä" },
-    { word: "Bussaus",           hint: "Likaisten astioiden kerääminen pöydältä" },
-    { word: "Ruokajono",         hint: "Odottavien asiakkaiden lista ovella" },
-    { word: "Sivu-upsell",       hint: "Suosittele lisäke tai juoma pääruualle" },
-    { word: "Bon vivant",        hint: "Asiakas joka nauttii elämästä ja hyvästä ruuasta" },
-    { word: "Lounaslista",       hint: "Paperinen tai taululla oleva päivän menu" },
+    { word:"Mise en place",  hint:"Kaikki valmiina ennen salin avaamista" },
+    { word:"Kattaus",        hint:"Pöytäliinat, lautaset ja aterimet paikoillaan" },
+    { word:"Kassavirhe",     hint:"Rahat eivät täsmää päivän päätteeksi" },
+    { word:"Specials",       hint:"Tänään tarjolla olevat erikoisruuat" },
+    { word:"Apertivo",       hint:"Pieni alkoholi tai mehu ennen ruokaa" },
+    { word:"Digestif",       hint:"Ruokailun jälkeen nautittava vahva juoma" },
+    { word:"Allergiakysely", hint:"Tarjoilija varmistaa ruokarajoitteet" },
+    { word:"Lisämyynti",     hint:"Suositella asiakkaalle lisää tilattavaa" },
+    { word:"Käteinen",       hint:"Maksetaan seteillä ja kolikoilla" },
+    { word:"Buffet",         hint:"Itsepoiminta-tyyppinen ruokailutapa" },
+    { word:"Tilauspadi",     hint:"Paperinen tai digitaalinen tilauslista" },
+    { word:"Reklamaatio",    hint:"Asiakas valittaa ruuasta tai palvelusta" },
+    { word:"Juomaraha",      hint:"Ylimääräinen maksu hyvästä palvelusta" },
+    { word:"Reservointi",    hint:"Pöydän varaaminen etukäteen" },
+    { word:"Päivän lounas",  hint:"Edullinen arkiruoka vaihtuvalla listalla" },
+    { word:"Tarjoilupyyhe",  hint:"Valkoinen liina tarjoilijan olkapäällä" },
+    { word:"Korkkimaksu",    hint:"Maksu oman viinin tuomisesta ravintolaan" },
+    { word:"Floor manager",  hint:"Salin esimies, joka koordinoi palvelua" },
+    { word:"Kierros",        hint:"Yksi lenkki pöydistä tarkistamassa asiakkaat" },
+    { word:"Kansi",          hint:"Yksi asiakas = yksi tämä ravintolan kielellä" },
+    { word:"Bussaus",        hint:"Likaisten astioiden kerääminen pöydältä" },
+    { word:"Ruokajono",      hint:"Odottavien asiakkaiden lista ovella" },
+    { word:"Sivu-upsell",    hint:"Suosittele lisäke tai juoma pääruualle" },
+    { word:"Bon vivant",     hint:"Asiakas joka nauttii elämästä ja hyvästä ruuasta" },
+    { word:"Lounaslista",    hint:"Paperinen tai taululla oleva päivän menu" },
   ],
   baarimikko: [
-    { word: "Shaker",            hint: "Metallinen astia cocktailin ravisteluun" },
-    { word: "Muddlata",          hint: "Hedelmien tai yrttien murskaaminen lasissa" },
-    { word: "Jigger",            hint: "Kaksisuuntainen mitta-astia baarissa" },
-    { word: "Dry shake",         hint: "Ravistus ensin ilman jäitä" },
-    { word: "Garnish",           hint: "Koristeeksi laitettava hedelmäviipale tai yrtti" },
-    { word: "Infuusio",          hint: "Mausteita tai yrttejä uutettu alkoholiin" },
-    { word: "Double",            hint: "Kaksinkertainen annos viinaa" },
-    { word: "On the rocks",      hint: "Juoma tarjoiltuna jäiden päällä" },
-    { word: "Neat",              hint: "Suoraan pullosta, ilman jäätä tai vettä" },
-    { word: "Layered shot",      hint: "Erikoistiheyksiset nesteet päällekkäin lasissa" },
-    { word: "Speed rail",        hint: "Baarin edessä oleva pikahylly yleisimmille viineille" },
-    { word: "Float",             hint: "Viimeinen kerros kaadetaan varovasti päälle" },
-    { word: "Back bar",          hint: "Baarin takaosa jossa pullot esillä" },
-    { word: "Bitter",            hint: "Vahva maustekonsantraatti cocktailiin" },
-    { word: "Highball",          hint: "Viina + pitkä juoma, iso lasi, paljon jäätä" },
-    { word: "Flairaus",          hint: "Pullonheittely baaritreikkinä" },
-    { word: "Strainer",          hint: "Siivilä joka pitää jäät shakerin sisällä" },
-    { word: "Bar spoon",         hint: "Pitkävarinen sekoituslusikka" },
-    { word: "Mocktail",          hint: "Cocktail ilman alkoholia" },
-    { word: "Last call",         hint: "Baarin viimeinen tilausmahdollisuus illassa" },
-    { word: "Chaser",            hint: "Juoma heti shotin jälkeen" },
-    { word: "Well liquor",       hint: "Baarin perusviina ilman merkkiä" },
-    { word: "Shrub",             hint: "Etikkapohjainen siirappisekoite juomiin" },
-    { word: "Aperol Spritz",     hint: "Aperol + Prosecco + sooda, oranssi juoma" },
-    { word: "Negroni",           hint: "Gin, Campari ja makea vermutti" },
+    { word:"Shaker",       hint:"Metallinen astia cocktailin ravisteluun" },
+    { word:"Muddlata",     hint:"Hedelmien tai yrttien murskaaminen lasissa" },
+    { word:"Jigger",       hint:"Kaksisuuntainen mitta-astia baarissa" },
+    { word:"Dry shake",    hint:"Ravistus ensin ilman jäitä" },
+    { word:"Garnish",      hint:"Koristeeksi laitettava hedelmäviipale tai yrtti" },
+    { word:"Infuusio",     hint:"Mausteita tai yrttejä uutettu alkoholiin" },
+    { word:"Double",       hint:"Kaksinkertainen annos viinaa" },
+    { word:"On the rocks", hint:"Juoma tarjoiltuna jäiden päällä" },
+    { word:"Neat",         hint:"Suoraan pullosta, ilman jäätä tai vettä" },
+    { word:"Layered shot", hint:"Erikoistiheyksiset nesteet päällekkäin lasissa" },
+    { word:"Speed rail",   hint:"Baarin edessä oleva pikahylly yleisimmille viineille" },
+    { word:"Float",        hint:"Viimeinen kerros kaadetaan varovasti päälle" },
+    { word:"Back bar",     hint:"Baarin takaosa jossa pullot esillä" },
+    { word:"Bitter",       hint:"Vahva maustekonsantraatti cocktailiin" },
+    { word:"Highball",     hint:"Viina + pitkä juoma, iso lasi, paljon jäätä" },
+    { word:"Flairaus",     hint:"Pullonheittely baaritreikkinä" },
+    { word:"Strainer",     hint:"Siivilä joka pitää jäät shakerin sisällä" },
+    { word:"Bar spoon",    hint:"Pitkävarinen sekoituslusikka" },
+    { word:"Mocktail",     hint:"Cocktail ilman alkoholia" },
+    { word:"Last call",    hint:"Baarin viimeinen tilausmahdollisuus illassa" },
+    { word:"Chaser",       hint:"Juoma heti shotin jälkeen" },
+    { word:"Well liquor",  hint:"Baarin perusviina ilman merkkiä" },
+    { word:"Shrub",        hint:"Etikkapohjainen siirappisekoite juomiin" },
+    { word:"Aperol Spritz",hint:"Aperol + Prosecco + sooda, oranssi juoma" },
+    { word:"Negroni",      hint:"Gin, Campari ja makea vermutti" },
   ],
   juomat: [
-    { word: "Karhu",             hint: "Hartwallin tumma lager, tölkissä karhu" },
-    { word: "Lapin Kulta",       hint: "Lapista tuleva kultainen lager" },
-    { word: "Koff",              hint: "Helsinkiläinen olut, lyhenne Sinebrychoffista" },
-    { word: "Sandels",           hint: "Hartwallin olut, nimetty kenraalin mukaan" },
-    { word: "Olvi",              hint: "Iisalmelainen panimoyritys ja sen perusolut" },
-    { word: "III olut",          hint: "Kolmosen olut, yleisin anniskeluolut baarissa" },
-    { word: "Lonkero",           hint: "Hartwallin grappamix, Suomen kansallisjuoma" },
-    { word: "Original Long Drink", hint: "Hartwallin klassinen greippigrappa tölkissä" },
-    { word: "Nokian Panimo",     hint: "Nokialla sijaitseva suomalainen craft-panimo" },
-    { word: "A. Le Coq",         hint: "Virolainen olut, suosittu Suomessa" },
-    { word: "Saku",              hint: "Virolainen olutmerkki, tuttu Suomen kaupoista" },
-    { word: "Heineken",          hint: "Hollantilainen vihreä olutpullo" },
-    { word: "Stella Artois",     hint: "Belgialainen lager, usein ravintolahanoissa" },
-    { word: "Guinness",          hint: "Irlantilainen musta stout, kermainen vaahto" },
-    { word: "Corona",            hint: "Meksikolainen olut, lime pullonsuussa" },
-    { word: "Paulaner",          hint: "Saksalainen vehnäolut, Oktoberfest-suosikki" },
-    { word: "Weizen",            hint: "Saksalainen vehnäolut, banaaninen aromi" },
-    { word: "IPA",               hint: "Humaloitu craft-olut, India Pale Ale" },
-    { word: "Stout",             hint: "Tumma ja täyteläinen oluttyyli" },
-    { word: "Prosecco",          hint: "Italialainen kuohuviini, rennompi kuin Champagne" },
-    { word: "Champagne",         hint: "Ranskalainen kuohuviini, vain tietyltä alueelta" },
-    { word: "Rosé",              hint: "Vaaleanpunainen viini, kesäinen valinta" },
-    { word: "Pinot Grigio",      hint: "Italialainen kuiva valkoviini" },
-    { word: "Sauvignon Blanc",   hint: "Sitruksinen valkoviini, usein Uudesta-Seelannista" },
-    { word: "Chardonnay",        hint: "Täyteläinen valkoviini, usein tammikypsytetty" },
-    { word: "Merlot",            hint: "Pehmeä punaviini, helposti lähestyttävä" },
-    { word: "Shiraz",            hint: "Mausteinen punaviini, myös Syrah" },
-    { word: "Cabernet Sauvignon", hint: "Tanniininen punaviini, kokoviinien kuningas" },
-    { word: "Cava",              hint: "Espanjalainen kuohuviini" },
-    { word: "Koskenkorva",       hint: "Suomalainen viina Pohjanmaalta, 38 %" },
-    { word: "Jaloviina",         hint: "Suomalainen tähtiviina, yksi tai kaksi tähteä" },
-    { word: "Finlandia",         hint: "Suomalainen vodka, vientituote maailmalle" },
-    { word: "Salmiakki Kossu",   hint: "Koskenkorva + salmiakki, suomalainen klassikko" },
-    { word: "Minttu",            hint: "Suomalainen piparminttulikööri" },
-    { word: "Absolut",           hint: "Ruotsalainen vodka, värikkäät pullot" },
-    { word: "Smirnoff",          hint: "Maailman myydyin vodkamerkki" },
-    { word: "Bacardi",           hint: "Valkoinen rommi, lepakko logossa" },
-    { word: "Captain Morgan",    hint: "Mausteinen tumma rommi, merirosvo etiketissä" },
-    { word: "Jack Daniel's",     hint: "Amerikkalainen Tennessee-viskey, musta etiketti" },
-    { word: "Jameson",           hint: "Irlantilainen viskey, pehmeä maku" },
-    { word: "Johnnie Walker",    hint: "Skotlantilainen viskey, kävelijä logossa" },
-    { word: "Jägermeister",      hint: "Saksalainen yrttiliköri, vihreä pullo" },
-    { word: "Aperol",            hint: "Oranssi italialainen aperitiivilikööri" },
-    { word: "Campari",           hint: "Kirkkaan punainen italialainen bitter" },
-    { word: "Baileys",           hint: "Irlantilainen kermalikööri" },
-    { word: "Kahlúa",            hint: "Meksikolainen kahvilikööri" },
-    { word: "Hendrick's",        hint: "Skotlantilainen gin, ruusun terälehti lasissa" },
-    { word: "Tanqueray",         hint: "Brittiläinen premium-gin, vihreä pullo" },
-    { word: "Jose Cuervo",       hint: "Tunnetuin tequilamerkki maailmassa" },
-    { word: "Malibu",            hint: "Kookosrommi, tropiikin maku" },
-    { word: "Sambuca",           hint: "Italialainen anisliköri, kahvipavut lasissa" },
-    { word: "Passoa",            hint: "Passionhedelmälikööri, punainen pullo" },
+    { word:"Karhu",              hint:"Hartwallin tumma lager, tölkissä karhu" },
+    { word:"Lapin Kulta",        hint:"Lapista tuleva kultainen lager" },
+    { word:"Koff",               hint:"Helsinkiläinen olut, lyhenne Sinebrychoffista" },
+    { word:"Sandels",            hint:"Hartwallin olut, nimetty kenraalin mukaan" },
+    { word:"Olvi",               hint:"Iisalmelainen panimoyritys ja sen perusolut" },
+    { word:"III olut",           hint:"Kolmosen olut, yleisin anniskeluolut baarissa" },
+    { word:"Lonkero",            hint:"Hartwallin grappamix, Suomen kansallisjuoma" },
+    { word:"Original Long Drink",hint:"Hartwallin klassinen greippigrappa tölkissä" },
+    { word:"Nokian Panimo",      hint:"Nokialla sijaitseva suomalainen craft-panimo" },
+    { word:"A. Le Coq",          hint:"Virolainen olut, suosittu Suomessa" },
+    { word:"Saku",               hint:"Virolainen olutmerkki, tuttu Suomen kaupoista" },
+    { word:"Heineken",           hint:"Hollantilainen vihreä olutpullo" },
+    { word:"Stella Artois",      hint:"Belgialainen lager, usein ravintolahanoissa" },
+    { word:"Guinness",           hint:"Irlantilainen musta stout, kermainen vaahto" },
+    { word:"Corona",             hint:"Meksikolainen olut, lime pullonsuussa" },
+    { word:"Paulaner",           hint:"Saksalainen vehnäolut, Oktoberfest-suosikki" },
+    { word:"Weizen",             hint:"Saksalainen vehnäolut, banaaninen aromi" },
+    { word:"IPA",                hint:"Humaloitu craft-olut, India Pale Ale" },
+    { word:"Stout",              hint:"Tumma ja täyteläinen oluttyyli" },
+    { word:"Prosecco",           hint:"Italialainen kuohuviini, rennompi kuin Champagne" },
+    { word:"Champagne",          hint:"Ranskalainen kuohuviini, vain tietyltä alueelta" },
+    { word:"Rosé",               hint:"Vaaleanpunainen viini, kesäinen valinta" },
+    { word:"Pinot Grigio",       hint:"Italialainen kuiva valkoviini" },
+    { word:"Sauvignon Blanc",    hint:"Sitruksinen valkoviini, usein Uudesta-Seelannista" },
+    { word:"Chardonnay",         hint:"Täyteläinen valkoviini, usein tammikypsytetty" },
+    { word:"Merlot",             hint:"Pehmeä punaviini, helposti lähestyttävä" },
+    { word:"Shiraz",             hint:"Mausteinen punaviini, myös Syrah" },
+    { word:"Cabernet Sauvignon", hint:"Tanniininen punaviini, kokoviinien kuningas" },
+    { word:"Cava",               hint:"Espanjalainen kuohuviini" },
+    { word:"Koskenkorva",        hint:"Suomalainen viina Pohjanmaalta, 38 %" },
+    { word:"Jaloviina",          hint:"Suomalainen tähtiviina, yksi tai kaksi tähteä" },
+    { word:"Finlandia",          hint:"Suomalainen vodka, vientituote maailmalle" },
+    { word:"Salmiakki Kossu",    hint:"Koskenkorva + salmiakki, suomalainen klassikko" },
+    { word:"Minttu",             hint:"Suomalainen piparminttulikööri" },
+    { word:"Absolut",            hint:"Ruotsalainen vodka, värikkäät pullot" },
+    { word:"Smirnoff",           hint:"Maailman myydyin vodkamerkki" },
+    { word:"Bacardi",            hint:"Valkoinen rommi, lepakko logossa" },
+    { word:"Captain Morgan",     hint:"Mausteinen tumma rommi, merirosvo etiketissä" },
+    { word:"Jack Daniel's",      hint:"Amerikkalainen Tennessee-viskey, musta etiketti" },
+    { word:"Jameson",            hint:"Irlantilainen viskey, pehmeä maku" },
+    { word:"Johnnie Walker",     hint:"Skotlantilainen viskey, kävelijä logossa" },
+    { word:"Jägermeister",       hint:"Saksalainen yrttiliköri, vihreä pullo" },
+    { word:"Aperol",             hint:"Oranssi italialainen aperitiivilikööri" },
+    { word:"Campari",            hint:"Kirkkaan punainen italialainen bitter" },
+    { word:"Baileys",            hint:"Irlantilainen kermalikööri" },
+    { word:"Kahlúa",             hint:"Meksikolainen kahvilikööri" },
+    { word:"Hendrick's",         hint:"Skotlantilainen gin, ruusun terälehti lasissa" },
+    { word:"Tanqueray",          hint:"Brittiläinen premium-gin, vihreä pullo" },
+    { word:"Jose Cuervo",        hint:"Tunnetuin tequilamerkki maailmassa" },
+    { word:"Malibu",             hint:"Kookosrommi, tropiikin maku" },
+    { word:"Sambuca",            hint:"Italialainen anisliköri, kahvipavut lasissa" },
+    { word:"Passoa",             hint:"Passionhedelmälikööri, punainen pullo" },
   ],
 };
 
-// Show word counts on toggles
-['kokki','tarjoilija','baarimikko','juomat'].forEach(cat => {
-  const el = document.getElementById('count-' + cat);
-  if (el) el.textContent = words[cat].length;
-});
+// ======================== NHIE CARDS ========================
+const nhieCards = {
+  fi: [
+    "En ole koskaan pudottanut tarjotinta",
+    "En ole koskaan juonut asiakkaan väärää juomaa",
+    "En ole koskaan unohtanut tilausta",
+    "En ole koskaan polttanut ruokaa niin pahoin, että se meni roskiin",
+    "En ole koskaan nukkunut vuorossa",
+    "En ole koskaan tullut töihin krapulaisena",
+    "En ole koskaan valehdellut asiakkaalle ruoasta",
+    "En ole koskaan syönyt asiakkaan jättämää ruokaa",
+    "En ole koskaan rikkoutunut vuoron aikana itkemään",
+    "En ole koskaan antanut ilmaisen juoman vain koska asiakas oli kaunis",
+    "En ole koskaan myöhästynyt vuorosta",
+    "En ole koskaan rikkonut lasia kiiruhteessani",
+    "En ole koskaan unohtanut tuoda laskun",
+    "En ole koskaan valehdellut erikoisruuan aineosista",
+    "En ole koskaan mennyt piiloon vaikean asiakkaan takia",
+    "En ole koskaan laskenut tippien määrää kesken vuoron",
+    "En ole koskaan käyttänyt puhelinta kylmiössä piilossa",
+    "En ole koskaan ottanut staff drinkin ennen vuoron loppua",
+    "En ole koskaan kirjoittanut tilauksen väärin niin, että kokki raivostui",
+    "En ole koskaan kadottanut tilauslappua",
+    "En ole koskaan vahingossa tarjoillut alkoholia alaikäiselle",
+    "En ole koskaan solminut asiakkaan kanssa flirttisuhteen",
+    "En ole koskaan varastanut ranskalaisperunoita keittiöstä",
+    "En ole koskaan esittänyt sairastavani, jotta pääsisin vuorosta",
+    "En ole koskaan syyskiinnittynyt asiakkaaseen enemmän kuin pitäisi",
+    "En ole koskaan rikkonut kahvakupin kahvaa kantaessani",
+    "En ole koskaan sanonut 'ei ongelmaa' tarkoittaen 'syvä ongelma'",
+    "En ole koskaan epähuomiossa kaatunut tarjotin päällä",
+    "En ole koskaan lähettänyt tekstiviestiä kollegalle saman pöydän toisesta puolelta",
+    "En ole koskaan väittänyt jokin ruoka olevan loppu, vaikka sitä oli",
+    "En ole koskaan tarjoillut viiniä väärälle pöydälle",
+    "En ole koskaan ottanut toisen tipin omaan taskuun",
+    "En ole koskaan väittänyt olevani allerginen ruoalle, jota en halunnut syödä työvuororuoaksi",
+    "En ole koskaan hukannut kynää kesken vuoron",
+    "En ole koskaan koputtanut suolakelloa lattialle",
+    "En ole koskaan vastannut asiakkaan kysymykseen 'en tiedä' ja jäänyt siihen",
+    "En ole koskaan yhdistänyt pöytätilauksia ilman lupaa",
+    "En ole koskaan laulanut keittiössä niin kovaa, että asiakkaat kuulivat",
+    "En ole koskaan käyttänyt työnantajan tuotteita kotiin vietäväksi",
+    "En ole koskaan herättänyt kollegaa, joka nukkui taukohuoneessa vuoron aikana",
+  ],
+  en: [
+    "I have never dropped a tray",
+    "I have never drunk a customer's wrong drink",
+    "I have never forgotten an order",
+    "I have never burned food so badly it went in the bin",
+    "I have never fallen asleep on shift",
+    "I have never come to work hungover",
+    "I have never lied to a customer about the food",
+    "I have never eaten food left by a customer",
+    "I have never broken down crying during a shift",
+    "I have never given a free drink just because a customer was attractive",
+    "I have never been late for a shift",
+    "I have never broken a glass in a rush",
+    "I have never forgotten to bring the bill",
+    "I have never lied about a dish's ingredients",
+    "I have never hidden from a difficult customer",
+    "I have never counted my tips mid-shift",
+    "I have never used my phone hiding in the walk-in",
+    "I have never taken a staff drink before the end of my shift",
+    "I have never written an order wrong and made the chef furious",
+    "I have never lost an order ticket",
+    "I have never accidentally served alcohol to a minor",
+    "I have never flirted with a customer",
+    "I have never stolen chips from the kitchen",
+    "I have never faked being sick to get out of a shift",
+    "I have never gotten too attached to a regular customer",
+    "I have never broken a cup handle while carrying it",
+    "I have never said 'no problem' meaning 'big problem'",
+    "I have never tripped while carrying a tray",
+    "I have never texted a colleague across the same table",
+    "I have never claimed a dish was sold out when it wasn't",
+    "I have never served wine to the wrong table",
+    "I have never taken another person's tip",
+    "I have never claimed to be allergic to a staff meal food I just didn't want",
+    "I have never lost my pen mid-shift",
+    "I have never knocked over a salt shaker",
+    "I have never answered a customer's question with 'I don't know' and left it at that",
+    "I have never combined table reservations without permission",
+    "I have never sung in the kitchen loud enough for guests to hear",
+    "I have never taken employer products home",
+    "I have never woken up a colleague sleeping in the break room during a shift",
+  ]
+};
+
+// ======================== COMPLAINT CARDS ========================
+const complaintCards = {
+  fi: [
+    "Keitto on liian märkä.",
+    "Ruoka oli liian kuuma. Se poltti suuni.",
+    "Salaatti on liian vihreä.",
+    "Pizza on pyöreä mutta tilasin neliön.",
+    "Musiikki soi liian musiikillisesti.",
+    "Tämä vesi maistuu vedeltä.",
+    "Annos oli täydellinen mutta söin sen liian nopeasti.",
+    "Tarjoilija hymyili liikaa. Se häiritsi syömistäni.",
+    "Pihvi oli medium, mutta halusin medium.",
+    "Ruoka oli hyvää mutta nyt se on poissa.",
+    "Leipä tuli ennen keittoa.",
+    "Lasissa oli jäätä. En tilaa jäätä.",
+    "WC oli liian puhdas. Epäluonnollinen.",
+    "Annos näytti paremmalta kuvassa.",
+    "Lautanen oli liian pyöreä.",
+    "Ravintola on liian ravintola-mainen.",
+    "Tilasin vegaanin annoksen mutta se ei maistu lihalta.",
+    "Vino oli liian viinimäinen.",
+    "Ketsuppi oli pullossa eikä lasissa.",
+    "Servietti oli taiteltuna väärin.",
+    "Ikkuna oli liian kirkas. Aurinko häiritsi.",
+    "Annos loppui kun söin sen.",
+    "Kokki ei tullut tervehtimään minua.",
+    "Menussa on liikaa vaihtoehtoja. En osaa valita.",
+    "Maksoin laskun ja rahat on nyt poissa.",
+    "Ruoka maistuu ruoalta.",
+    "Pöytä oli liian lähellä toista pöytää.",
+    "Jälkiruoka oli liian jälkiruoka-mainen.",
+    "Tarjoilija muisti allergiaksi kysytty aiemmin. Tuntui tungettelevalta.",
+    "Kahvi oli kuuma. Minulla on kiire jäähdyttää se.",
+  ],
+  en: [
+    "The soup is too wet.",
+    "The food was too hot. It burned my mouth.",
+    "The salad is too green.",
+    "The pizza is round but I ordered a square.",
+    "The music sounds too musical.",
+    "This water tastes like water.",
+    "The dish was perfect but now it's gone.",
+    "The server smiled too much. It put me off eating.",
+    "The steak was medium but I wanted medium.",
+    "The food was great but now I've eaten it.",
+    "The bread came before the soup.",
+    "There was ice in my glass. I didn't order ice.",
+    "The bathroom was too clean. Unnatural.",
+    "The dish looked better in the picture.",
+    "The plate was too round.",
+    "The restaurant is too restaurant-like.",
+    "I ordered vegan but it doesn't taste like meat.",
+    "The wine was too wine-like.",
+    "The ketchup was in a bottle not a glass.",
+    "The napkin was folded wrong.",
+    "The window was too bright. The sun bothered me.",
+    "The dish ran out when I ate it.",
+    "The chef didn't come to greet me.",
+    "There are too many options on the menu. I can't choose.",
+    "I paid the bill and now the money is gone.",
+    "The food tastes like food.",
+    "The table was too close to another table.",
+    "The dessert was too dessert-like.",
+    "The server remembered my allergy from earlier. Felt intrusive.",
+    "The coffee was hot. I'm in a hurry to cool it down.",
+  ]
+};
+
+// ======================== HOT SEAT QUESTIONS ========================
+const hotSeatQuestions = {
+  fi: [
+    "Kuka myöhästyisi vuorosta?",
+    "Kuka joisi staff drinkin nopeimmin?",
+    "Kuka selviäisi parhaiten helvetin kiireestä?",
+    "Kuka antaisi ilmaisen juoman ilman syytä?",
+    "Kuka nukahtaisi taukohuoneessa?",
+    "Kuka unohtaisi tilauksen useimmiten?",
+    "Kuka tulisi töihin krapulaisena?",
+    "Kuka flirttaisi asiakkaiden kanssa?",
+    "Kuka varastaisi ranskalaisia keittiöstä?",
+    "Kuka kirjoittaisi tilauksen väärin?",
+    "Kuka kävelisi suoraan esimiehen eteen itkemään?",
+    "Kuka olisi paras asiakaspalvelussa?",
+    "Kuka rikkoisi eniten laseja?",
+    "Kuka selittäisi ruokalistan ulkoa parhaiten?",
+    "Kuka solmisi parhaan suhteen kanta-asiakkaaseen?",
+    "Kuka lähettäisi eniten tekstiviestejä vuoron aikana?",
+    "Kuka pukeutuisi parhaiten henkilökunnan juhliin?",
+    "Kuka söisi eniten työnantajan ruokaa?",
+    "Kuka tekisi parhaiten upsell-myynnin?",
+    "Kuka jäisi viimeiseksi töihin ilman lisäkorvausta?",
+    "Kuka olisi pahin juoruilemaan kollegoista?",
+    "Kuka ottaisi reklamaatiot kaikkein raskaiten?",
+    "Kuka osaa kantaa eniten lautasia kerralla?",
+    "Kuka selviäisi parhaiten hankalasta asiakkaasta?",
+    "Kuka on todennäköisin kandidaatti vuoromestarille?",
+    "Kuka unohtaisi ottaa esiliinansa pois ennen WC:hen menoa?",
+    "Kuka viettäisi eniten aikaa kylmiössä puhelimen kanssa?",
+    "Kuka alkaisi itkeä jos asiakas haukkui heidän ruokaansa?",
+    "Kuka tekisi parasta ruokaa henkilökunnan aterialle?",
+    "Kuka ensimmäisenä pyytäisi vapaapäivää jouluksi?",
+  ],
+  en: [
+    "Who would be late for a shift?",
+    "Who would drink the staff drink fastest?",
+    "Who would handle a rush best?",
+    "Who would give a free drink for no reason?",
+    "Who would fall asleep in the break room?",
+    "Who would forget an order most often?",
+    "Who would come to work hungover?",
+    "Who would flirt with customers?",
+    "Who would steal chips from the kitchen?",
+    "Who would write an order wrong?",
+    "Who would cry in front of the manager?",
+    "Who would be best at customer service?",
+    "Who would break the most glasses?",
+    "Who could recite the menu best from memory?",
+    "Who would build the best relationship with a regular?",
+    "Who would send the most texts during a shift?",
+    "Who would dress best at the staff party?",
+    "Who would eat the most employer food?",
+    "Who would be best at upselling?",
+    "Who would stay last without extra pay?",
+    "Who is the worst gossip about colleagues?",
+    "Who takes complaints most personally?",
+    "Who can carry the most plates at once?",
+    "Who handles difficult customers best?",
+    "Who is the most likely future shift manager?",
+    "Who would forget to take off their apron before the bathroom?",
+    "Who spends the most time in the walk-in on their phone?",
+    "Who would cry if a customer criticized their food?",
+    "Who would make the best staff meal?",
+    "Who would be first to ask for Christmas day off?",
+  ]
+};
 
 // ======================== STATE ========================
-const DEFAULT_NAMES = ['Tiimi 1', 'Tiimi 2', 'Tiimi 3', 'Tiimi 4'];
-const ALL_CATS = ['kokki', 'tarjoilija', 'baarimikko', 'juomat'];
+const DEFAULT_NAMES = ['Tiimi 1','Tiimi 2','Tiimi 3','Tiimi 4'];
+const ALL_CATS = ['kokki','tarjoilija','baarimikko','juomat'];
+let currentLang = 'fi';
+
+const translations = {
+  fi: {
+    subtitle:'Selitä se sanoin', categories:'Kategoriat', roundTime:'Kierroksen aika',
+    teamCount:'Tiimien määrä', teams:'tiimiä', start:'Aloita peli',
+    startInfo:'Selittäjä kuvailee sanaa — ei saa sanoa itse sanaa!',
+    all:'KAIKKI', correct:'✓ Oikein', skip:'↷ Ohita', endRound:'Lopeta kierros',
+    nextTeam:'Seuraava tiimi →', endGame:'Lopeta peli', playAgain:'Pelaa uudelleen',
+    gameOver:'Peli päättyi', finalScore:'Lopputulos', winner:'🏆 Voittaja',
+    points:'pistettä', roundOver:'Kierros ohi', roundPoints:'Pisteet tällä kierroksella',
+    correctWord:'oikein', skippedWord:'ohitettu',
+    nhieTitle:'En ole koskaan', nhieNext:'Seuraava →',
+    complaintTitle:'Asiakas on aina oikeassa', complaintNext:'Seuraava →',
+    hsStart:'Aloita 🔥', hsNext:'Seuraava →',
+    chStart:'Aloita', chEndRound:'Lopeta kierros',
+  },
+  en: {
+    subtitle:'Describe it with words', categories:'Categories', roundTime:'Round time',
+    teamCount:'Teams', teams:'teams', start:'Start game',
+    startInfo:'Describe the word — you cannot say the word itself!',
+    all:'ALL', correct:'✓ Correct', skip:'↷ Skip', endRound:'End round',
+    nextTeam:'Next team →', endGame:'End game', playAgain:'Play again',
+    gameOver:'Game over', finalScore:'Final scores', winner:'🏆 Winner',
+    points:'points', roundOver:'Round over', roundPoints:'Points this round',
+    correctWord:'correct', skippedWord:'skipped',
+    nhieTitle:'Never Have I Ever', nhieNext:'Next →',
+    complaintTitle:'Customer is Always Right', complaintNext:'Next →',
+    hsStart:'Start 🔥', hsNext:'Next →',
+    chStart:'Start', chEndRound:'End round',
+  }
+};
 
 let state = {
   activeCats: new Set(ALL_CATS),
   timerSeconds: 60,
   teamCount: 2,
   teamNames: [...DEFAULT_NAMES],
-  teams: [],
-  currentTeam: 0,
-  deck: [],
-  currentWordIndex: 0,
-  roundCorrect: 0,
-  roundSkipped: 0,
-  timerInterval: null,
-  timeLeft: 60,
-  roundActive: false,
+  teams: [], currentTeam: 0,
+  deck: [], currentWordIndex: 0,
+  roundCorrect: 0, roundSkipped: 0,
+  timerInterval: null, timeLeft: 60, roundActive: false,
 };
+
+let chState = {
+  timerSeconds: 60, teamCount: 2,
+  teamNames: ['Tiimi 1','Tiimi 2','Tiimi 3','Tiimi 4'],
+  teams: [], currentTeam: 0,
+  deck: [], currentWordIndex: 0,
+  roundCorrect: 0, roundSkipped: 0,
+  timerInterval: null, timeLeft: 60, roundActive: false,
+};
+
+let nhieIndex = 0;
+let nhieDeck = [];
+let complaintIndex = 0;
+let complaintDeck = [];
+let hsIndex = 0;
+let hsDeck = [];
+let hsPlayers = ['Pelaaja 1','Pelaaja 2'];
 
 // ======================== HELPERS ========================
 function shuffle(arr) {
-  let a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
+  let a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
   return a;
 }
-
-function buildDeck() {
-  let pool = [];
-  state.activeCats.forEach(cat => {
-    pool = pool.concat(words[cat].map(w => ({...w, cat})));
-  });
+function buildAliasDeck() {
+  let pool=[];
+  state.activeCats.forEach(cat=>{pool=pool.concat(words[cat].map(w=>({...w,cat})));});
   return shuffle(pool);
 }
-
+function buildCharadesDeck() {
+  let pool=[];
+  ALL_CATS.forEach(cat=>{pool=pool.concat(words[cat].map(w=>({...w,cat})));});
+  return shuffle(pool);
+}
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+const CIRCUMFERENCE=251.2;
+
+// ======================== LANGUAGE ========================
+function updateLanguage(lang) {
+  currentLang = lang;
+  const t = translations[lang];
+  document.querySelectorAll('[data-fi]').forEach(el=>{
+    if(el.dataset[lang]) el.textContent=el.dataset[lang];
+  });
+  document.querySelectorAll('.lang-btn').forEach(b=>{
+    b.classList.toggle('active-lang', b.dataset.lang===lang);
+  });
+  document.querySelectorAll('.cat-label').forEach(el=>{el.textContent=el.dataset[lang]||el.dataset.fi;});
+  // update specific elements
+  document.getElementById('alias-sub').textContent=t.subtitle;
+  document.getElementById('alias-edition').textContent=lang==='fi'?'ravintola-edition':'restaurant edition';
+  document.getElementById('lbl-categories').textContent=t.categories;
+  document.getElementById('lbl-round-time').textContent=t.roundTime;
+  document.getElementById('lbl-teams').textContent=t.teamCount;
+  document.getElementById('lbl-teams-unit').textContent=t.teams;
+  document.getElementById('btn-start').textContent=t.start;
+  document.getElementById('start-info').textContent=t.startInfo;
+  document.getElementById('btn-correct').textContent=t.correct;
+  document.getElementById('btn-skip').textContent=t.skip;
+  document.getElementById('btn-end-round').textContent=t.endRound;
+  document.getElementById('btn-next-team').textContent=t.nextTeam;
+  document.getElementById('btn-end-game').textContent=t.endGame;
+  document.getElementById('btn-restart').textContent=t.playAgain;
+  document.getElementById('lbl-round-over').textContent=t.roundOver;
+  document.getElementById('lbl-round-pts').textContent=t.roundPoints;
+  document.getElementById('lbl-game-over').textContent=t.gameOver;
+  document.getElementById('lbl-final-scores').textContent=t.finalScore;
+  document.getElementById('lbl-winner').textContent=t.winner;
+  document.getElementById('lbl-nhie-title').textContent=t.nhieTitle;
+  document.getElementById('nhie-next').textContent=t.nhieNext;
+  document.getElementById('lbl-complaint-title').textContent=t.complaintTitle;
+  document.getElementById('complaint-next').textContent=t.complaintNext;
+  document.getElementById('btn-hs-start').textContent=t.hsStart;
+  document.getElementById('hs-next').textContent=t.hsNext;
+  document.getElementById('btn-ch-start').textContent=t.chStart;
+  document.getElementById('charades-end').innerHTML='← <span>'+t.chEndRound+'</span>';
+  document.getElementById('lbl-ch-timer').textContent=t.roundTime;
+  document.getElementById('lbl-ch-teams').textContent=t.teamCount;
+  document.getElementById('lbl-ch-unit').textContent=t.teams;
+  updateStartButton();
 }
 
+document.addEventListener('click', e=>{
+  if(e.target.classList.contains('lang-btn')) updateLanguage(e.target.dataset.lang);
+});
+
+// ======================== ALIAS SETUP ========================
+['kokki','tarjoilija','baarimikko','juomat'].forEach(cat=>{
+  const el=document.getElementById('count-'+cat);
+  if(el) el.textContent=words[cat].length;
+});
+
 function updateStartButton() {
-  const btn = document.getElementById('btn-start');
-  const info = document.getElementById('start-info');
-  if (state.activeCats.size === 0) {
-    btn.disabled = true;
-    info.className = 'warn-small';
-    info.textContent = 'Valitse vähintään yksi kategoria!';
+  const btn=document.getElementById('btn-start');
+  const info=document.getElementById('start-info');
+  if(state.activeCats.size===0){
+    btn.disabled=true; info.className='warn-small';
+    info.textContent=currentLang==='fi'?'Valitse vähintään yksi kategoria!':'Select at least one category!';
   } else {
-    btn.disabled = false;
-    info.className = 'info-small';
-    info.textContent = 'Selittäjä kuvailee sanaa — ei saa sanoa itse sanaa!';
+    btn.disabled=false; info.className='info-small';
+    info.textContent=translations[currentLang].startInfo;
   }
 }
 
-// ======================== CATEGORY TOGGLES ========================
-document.querySelectorAll('.cat-toggle').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const cat = btn.dataset.cat;
-    // Don't allow removing the last active category
-    if (state.activeCats.has(cat) && state.activeCats.size === 1) return;
-    if (state.activeCats.has(cat)) {
-      state.activeCats.delete(cat);
-      btn.classList.remove('on');
-    } else {
-      state.activeCats.add(cat);
-      btn.classList.add('on');
-    }
+document.querySelectorAll('.cat-toggle').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const cat=btn.dataset.cat;
+    if(state.activeCats.has(cat)&&state.activeCats.size===1) return;
+    if(state.activeCats.has(cat)){state.activeCats.delete(cat);btn.classList.remove('on');}
+    else{state.activeCats.add(cat);btn.classList.add('on');}
     updateStartButton();
-updateLanguage('fi');
   });
 });
 
-// ======================== TEAM GRID ========================
 function renderTeamGrid() {
-  const grid = document.getElementById('teams-grid');
-  grid.innerHTML = '';
-  for (let i = 0; i < state.teamCount; i++) {
-    const card = document.createElement('div');
-    card.className = 'team-card';
-    card.innerHTML = `<input class="team-name-input" id="team-name-${i}"
-        value="${state.teamNames[i]}"
-        maxlength="14"
-        oninput="state.teamNames[${i}] = this.value">`;
+  const grid=document.getElementById('teams-grid');
+  grid.innerHTML='';
+  for(let i=0;i<state.teamCount;i++){
+    const card=document.createElement('div');
+    card.className='team-card';
+    card.innerHTML=`<input class="team-name-input" id="team-name-${i}" value="${state.teamNames[i]}" maxlength="14" oninput="state.teamNames[${i}]=this.value">`;
     grid.appendChild(card);
   }
 }
 
-// ======================== TIMER ========================
-const CIRCUMFERENCE = 251.2;
+document.getElementById('timer-minus').addEventListener('click',()=>{if(state.timerSeconds>15){state.timerSeconds-=15;document.getElementById('timer-val').textContent=state.timerSeconds;}});
+document.getElementById('timer-plus').addEventListener('click',()=>{if(state.timerSeconds<180){state.timerSeconds+=15;document.getElementById('timer-val').textContent=state.timerSeconds;}});
+document.getElementById('team-count-minus').addEventListener('click',()=>{if(state.teamCount>2){state.teamCount--;document.getElementById('team-count-val').textContent=state.teamCount;renderTeamGrid();}});
+document.getElementById('team-count-plus').addEventListener('click',()=>{if(state.teamCount<4){state.teamCount++;document.getElementById('team-count-val').textContent=state.teamCount;renderTeamGrid();}});
 
-function updateTimerRing(timeLeft, total) {
-  const frac = timeLeft / total;
-  const offset = CIRCUMFERENCE * (1 - frac);
-  const ring = document.getElementById('timer-ring');
-  ring.style.strokeDashoffset = offset;
-  if (frac > 0.5) ring.style.stroke = '#c8922a';
-  else if (frac > 0.25) ring.style.stroke = '#d47020';
-  else ring.style.stroke = '#b94a2c';
+document.getElementById('btn-start').addEventListener('click',()=>{
+  for(let i=0;i<state.teamCount;i++){
+    const inp=document.getElementById(`team-name-${i}`);
+    state.teamNames[i]=(inp&&inp.value.trim())||DEFAULT_NAMES[i];
+  }
+  state.teams=Array.from({length:state.teamCount},(_,i)=>({name:state.teamNames[i],score:0}));
+  startNewRound(0);
+});
+
+// ======================== ALIAS TIMER ========================
+function updateTimerRing(timeLeft,total) {
+  const frac=timeLeft/total;
+  const ring=document.getElementById('timer-ring');
+  ring.style.strokeDashoffset=CIRCUMFERENCE*(1-frac);
+  ring.style.stroke=frac>0.5?'#c8922a':frac>0.25?'#d47020':'#b94a2c';
 }
 
 function startTimer() {
   clearInterval(state.timerInterval);
-  state.timeLeft = state.timerSeconds;
-  document.getElementById('timer-display').textContent = state.timeLeft;
-  updateTimerRing(state.timeLeft, state.timerSeconds);
-  state.roundActive = true;
-
-  state.timerInterval = setInterval(() => {
+  state.timeLeft=state.timerSeconds;
+  document.getElementById('timer-display').textContent=state.timeLeft;
+  updateTimerRing(state.timeLeft,state.timerSeconds);
+  state.roundActive=true;
+  state.timerInterval=setInterval(()=>{
     state.timeLeft--;
-    document.getElementById('timer-display').textContent = state.timeLeft;
-    updateTimerRing(state.timeLeft, state.timerSeconds);
-    if (state.timeLeft <= 0) {
-      clearInterval(state.timerInterval);
-      state.roundActive = false;
-      endRound();
-    }
-  }, 1000);
+    document.getElementById('timer-display').textContent=state.timeLeft;
+    updateTimerRing(state.timeLeft,state.timerSeconds);
+    if(state.timeLeft<=0){clearInterval(state.timerInterval);state.roundActive=false;endRound();}
+  },1000);
 }
 
-// ======================== WORD DISPLAY ========================
 function showWord() {
-  const w = state.deck[state.currentWordIndex % state.deck.length];
-  document.getElementById('word-main').textContent = w.word;
-  document.getElementById('word-hint').textContent = w.hint;
-  const tag = document.getElementById('word-cat-tag');
-  const labels = { kokki: '👨‍🍳 Kokki', tarjoilija: '🍽 Tarjoilija', baarimikko: '🍸 Baarimikko', juomat: '🍺 Juomat' };
-  tag.textContent = labels[w.cat] || '';
-  tag.className = 'word-cat-tag ' + w.cat;
-
-  const card = document.getElementById('word-card');
-  card.style.opacity = '0';
-  card.style.transform = 'scale(0.96)';
-  setTimeout(() => {
-    card.style.transition = 'opacity 0.2s, transform 0.2s';
-    card.style.opacity = '1';
-    card.style.transform = 'scale(1)';
-  }, 30);
+  const w=state.deck[state.currentWordIndex%state.deck.length];
+  document.getElementById('word-main').textContent=w.word;
+  document.getElementById('word-hint').textContent=w.hint;
+  const tag=document.getElementById('word-cat-tag');
+  const lbl=currentLang==='en'?{kokki:'👨‍🍳 Kitchen',tarjoilija:'🍽 Service',baarimikko:'🍸 Bar',juomat:'🍺 Drinks'}:{kokki:'👨‍🍳 Kokki',tarjoilija:'🍽 Tarjoilija',baarimikko:'🍸 Baarimikko',juomat:'🍺 Juomat'};
+  tag.textContent=lbl[w.cat]||'';tag.className='word-cat-tag '+w.cat;
+  const card=document.getElementById('word-card');
+  card.style.opacity='0';card.style.transform='scale(0.96)';
+  setTimeout(()=>{card.style.transition='opacity 0.2s,transform 0.2s';card.style.opacity='1';card.style.transform='scale(1)';},30);
 }
 
-function addChip(type) {
-  const row = document.getElementById('round-chips');
-  const chip = document.createElement('div');
-  chip.className = 'round-chip ' + type;
-  chip.textContent = type === 'correct' ? '✓' : '↷';
-  row.appendChild(chip);
-  row.scrollLeft = row.scrollWidth;
+function addChip(rowId,type) {
+  const row=document.getElementById(rowId);
+  const chip=document.createElement('div');chip.className='round-chip '+type;chip.textContent=type==='correct'?'✓':'↷';
+  row.appendChild(chip);row.scrollLeft=row.scrollWidth;
 }
 
-// ======================== END ROUND ========================
 function endRound() {
-  clearInterval(state.timerInterval);
-  state.roundActive = false;
-  state.teams[state.currentTeam].score += state.roundCorrect;
-
-  document.getElementById('result-team-name').textContent = state.teams[state.currentTeam].name;
-  document.getElementById('result-pts').textContent = state.roundCorrect;
-  document.getElementById('result-breakdown').textContent =
-    `${state.roundCorrect} ${translations[currentLang].correctWord} · ${state.roundSkipped} ${translations[currentLang].skippedWord}`;
-
-  const resScores = document.getElementById('result-scores');
-  resScores.innerHTML = '';
-  state.teams.forEach((t, i) => {
-    const el = document.createElement('div');
-    el.className = 'team-card';
-    if (i === state.currentTeam) el.classList.add('active');
-    el.innerHTML = `<div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-bottom:0.3rem">${t.name}</div>
-                    <div class="team-score">${t.score} p</div>`;
+  clearInterval(state.timerInterval);state.roundActive=false;
+  state.teams[state.currentTeam].score+=state.roundCorrect;
+  const t=translations[currentLang];
+  document.getElementById('result-team-name').textContent=state.teams[state.currentTeam].name;
+  document.getElementById('result-pts').textContent=state.roundCorrect;
+  document.getElementById('result-breakdown').textContent=`${state.roundCorrect} ${t.correctWord} · ${state.roundSkipped} ${t.skippedWord}`;
+  const resScores=document.getElementById('result-scores');resScores.innerHTML='';
+  state.teams.forEach((tm,i)=>{
+    const el=document.createElement('div');el.className='team-card';if(i===state.currentTeam)el.classList.add('active');
+    el.innerHTML=`<div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-bottom:0.3rem">${tm.name}</div><div class="team-score">${tm.score} p</div>`;
     resScores.appendChild(el);
   });
-
   showScreen('screen-result');
 }
 
-// ======================== BUTTON HANDLERS ========================
-document.getElementById('timer-minus').addEventListener('click', () => {
-  if (state.timerSeconds > 15) {
-    state.timerSeconds -= 15;
-    document.getElementById('timer-val').textContent = state.timerSeconds;
-  }
-});
-document.getElementById('timer-plus').addEventListener('click', () => {
-  if (state.timerSeconds < 180) {
-    state.timerSeconds += 15;
-    document.getElementById('timer-val').textContent = state.timerSeconds;
-  }
-});
-
-document.getElementById('team-count-minus').addEventListener('click', () => {
-  if (state.teamCount > 2) {
-    state.teamCount--;
-    document.getElementById('team-count-val').textContent = state.teamCount;
-    renderTeamGrid();
-  }
-});
-document.getElementById('team-count-plus').addEventListener('click', () => {
-  if (state.teamCount < 4) {
-    state.teamCount++;
-    document.getElementById('team-count-val').textContent = state.teamCount;
-    renderTeamGrid();
-  }
-});
-
-document.getElementById('btn-start').addEventListener('click', () => {
-  for (let i = 0; i < state.teamCount; i++) {
-    const inp = document.getElementById(`team-name-${i}`);
-    state.teamNames[i] = (inp && inp.value.trim()) || DEFAULT_NAMES[i];
-  }
-  state.teams = Array.from({length: state.teamCount}, (_, i) => ({
-    name: state.teamNames[i],
-    score: 0
-  }));
-  startNewRound(0);
-});
-
 function startNewRound(teamIndex) {
-  state.currentTeam = teamIndex;
-  state.deck = buildDeck();
-  state.currentWordIndex = 0;
-  state.roundCorrect = 0;
-  state.roundSkipped = 0;
-  document.getElementById('round-chips').innerHTML = '';
-
-  document.getElementById('current-team-badge').textContent = state.teams[teamIndex].name;
-
-  // Show active categories in badge
-  const catLabels = { kokki: 'KOKKI', tarjoilija: 'TARJOILIJA', baarimikko: 'BAARI', juomat: 'JUOMAT' };
-  const activeLabels = ALL_CATS.filter(c => state.activeCats.has(c)).map(c => catLabels[c]);
-  document.getElementById('cat-badge').textContent =
-    activeLabels.length === 4 ? translations[currentLang].all : activeLabels.join('\n');
-
-  showWord();
-  showScreen('screen-game');
-  startTimer();
+  state.currentTeam=teamIndex;state.deck=buildAliasDeck();state.currentWordIndex=0;
+  state.roundCorrect=0;state.roundSkipped=0;document.getElementById('round-chips').innerHTML='';
+  document.getElementById('current-team-badge').textContent=state.teams[teamIndex].name;
+  const catBadge={kokki:'KOKKI',tarjoilija:'TARJOILIJA',baarimikko:'BAARI',juomat:'JUOMAT'};
+  const activeLabels=ALL_CATS.filter(c=>state.activeCats.has(c)).map(c=>catBadge[c]);
+  document.getElementById('cat-badge').textContent=activeLabels.length===4?translations[currentLang].all:activeLabels.join('\n');
+  showWord();showScreen('screen-game');startTimer();
 }
 
-document.getElementById('btn-correct').addEventListener('click', () => {
-  if (!state.roundActive) return;
-  state.roundCorrect++;
-  addChip('correct');
-  state.currentWordIndex++;
-  showWord();
-});
-
-document.getElementById('btn-skip').addEventListener('click', () => {
-  if (!state.roundActive) return;
-  state.roundSkipped++;
-  addChip('skipped');
-  state.currentWordIndex++;
-  showWord();
-});
-
-document.getElementById('btn-end-round').addEventListener('click', () => { endRound(); });
-
-document.getElementById('btn-next-team').addEventListener('click', () => {
-  const next = (state.currentTeam + 1) % state.teams.length;
-  startNewRound(next);
-});
-
-document.getElementById('btn-end-game').addEventListener('click', () => { showEndScreen(); });
+document.getElementById('btn-correct').addEventListener('click',()=>{if(!state.roundActive)return;state.roundCorrect++;addChip('round-chips','correct');state.currentWordIndex++;showWord();});
+document.getElementById('btn-skip').addEventListener('click',()=>{if(!state.roundActive)return;state.roundSkipped++;addChip('round-chips','skipped');state.currentWordIndex++;showWord();});
+document.getElementById('btn-end-round').addEventListener('click',()=>endRound());
+document.getElementById('btn-next-team').addEventListener('click',()=>{const next=(state.currentTeam+1)%state.teams.length;startNewRound(next);});
+document.getElementById('btn-end-game').addEventListener('click',()=>showEndScreen());
 
 function showEndScreen() {
-  const sorted = [...state.teams].sort((a,b) => b.score - a.score);
-  document.getElementById('winner-name').textContent = sorted[0].name;
-  document.getElementById('winner-score').textContent = sorted[0].score + ' ' + translations[currentLang].points;
-
-  const list = document.getElementById('final-scores-list');
-  list.innerHTML = '';
-  sorted.forEach((t, i) => {
-    const row = document.createElement('div');
-    row.className = 'score-row';
-    row.innerHTML = `<span>${i + 1}. ${t.name}</span><span style="color:var(--gold)">${t.score} p</span>`;
-    list.appendChild(row);
-  });
+  const sorted=[...state.teams].sort((a,b)=>b.score-a.score);
+  document.getElementById('winner-name').textContent=sorted[0].name;
+  document.getElementById('winner-score').textContent=sorted[0].score+' '+translations[currentLang].points;
+  const list=document.getElementById('final-scores-list');list.innerHTML='';
+  sorted.forEach((tm,i)=>{const row=document.createElement('div');row.className='score-row';row.innerHTML=`<span>${i+1}. ${tm.name}</span><span style="color:var(--gold)">${tm.score} p</span>`;list.appendChild(row);});
   showScreen('screen-end');
 }
 
-document.getElementById('btn-restart').addEventListener('click', () => {
-  renderTeamGrid();
-  showScreen('screen-start');
+document.getElementById('btn-restart').addEventListener('click',()=>{renderTeamGrid();showScreen('screen-start');});
+
+// ======================== CHARADES ========================
+function renderChTeamGrid() {
+  const grid=document.getElementById('ch-teams-grid');grid.innerHTML='';
+  for(let i=0;i<chState.teamCount;i++){
+    const card=document.createElement('div');card.className='team-card';
+    card.innerHTML=`<input class="team-name-input" id="ch-team-name-${i}" value="${chState.teamNames[i]}" maxlength="14" oninput="chState.teamNames[${i}]=this.value">`;
+    grid.appendChild(card);
+  }
+}
+
+document.getElementById('ch-timer-minus').addEventListener('click',()=>{if(chState.timerSeconds>15){chState.timerSeconds-=15;document.getElementById('ch-timer-val').textContent=chState.timerSeconds;}});
+document.getElementById('ch-timer-plus').addEventListener('click',()=>{if(chState.timerSeconds<180){chState.timerSeconds+=15;document.getElementById('ch-timer-val').textContent=chState.timerSeconds;}});
+document.getElementById('ch-count-minus').addEventListener('click',()=>{if(chState.teamCount>2){chState.teamCount--;document.getElementById('ch-count-val').textContent=chState.teamCount;renderChTeamGrid();}});
+document.getElementById('ch-count-plus').addEventListener('click',()=>{if(chState.teamCount<4){chState.teamCount++;document.getElementById('ch-count-val').textContent=chState.teamCount;renderChTeamGrid();}});
+
+document.getElementById('btn-ch-start').addEventListener('click',()=>{
+  for(let i=0;i<chState.teamCount;i++){const inp=document.getElementById(`ch-team-name-${i}`);chState.teamNames[i]=(inp&&inp.value.trim())||DEFAULT_NAMES[i];}
+  chState.teams=Array.from({length:chState.teamCount},(_,i)=>({name:chState.teamNames[i],score:0}));
+  startChRound(0);
 });
 
+function updateChRing(timeLeft,total) {
+  const frac=timeLeft/total;
+  const ring=document.getElementById('charades-ring');
+  ring.style.strokeDashoffset=CIRCUMFERENCE*(1-frac);
+  ring.style.stroke=frac>0.5?'#c8922a':frac>0.25?'#d47020':'#b94a2c';
+}
 
-// ======================== TRANSLATIONS ========================
-let currentLang = 'fi';
+function showCharadesWord() {
+  const w=chState.deck[chState.currentWordIndex%chState.deck.length];
+  const catLbl=currentLang==='en'?{kokki:'👨‍🍳 Kitchen',tarjoilija:'🍽 Service',baarimikko:'🍸 Bar',juomat:'🍺 Drinks'}:{kokki:'👨‍🍳 Kokki',tarjoilija:'🍽 Tarjoilija',baarimikko:'🍸 Baarimikko',juomat:'🍺 Juomat'};
+  document.getElementById('charades-word').textContent=w.word;
+  document.getElementById('charades-hint').textContent=w.hint;
+  document.getElementById('charades-cat-tag').textContent=catLbl[w.cat]||'';
+  const card=document.getElementById('charades-card');
+  card.style.opacity='0';card.style.transform='scale(0.96)';
+  setTimeout(()=>{card.style.transition='opacity 0.2s,transform 0.2s';card.style.opacity='1';card.style.transform='scale(1)';},30);
+}
 
-const translations = {
-  fi: {
-    subtitle: 'Selitä se sanoin',
-    categories: 'Kategoriat',
-    roundTime: 'Kierroksen aika',
-    teamCount: 'Tiimien määrä',
-    teams: 'tiimiä',
-    start: 'Aloita peli',
-    startInfo: 'Selittäjä kuvailee sanaa — ei saa sanoa itse sanaa!',
-    all: 'KAIKKI',
-    correct: '✓ Oikein',
-    skip: '↷ Ohita',
-    endRound: 'Lopeta kierros',
-    nextTeam: 'Seuraava tiimi →',
-    endGame: 'Lopeta peli',
-    playAgain: 'Pelaa uudelleen',
-    gameOver: 'Peli päättyi',
-    finalScore: 'Lopputulos',
-    winner: '🏆 Voittaja',
-    points: 'pistettä',
-    roundOver: 'Kierros ohi',
-    roundPoints: 'Pisteet tällä kierroksella',
-    correctWord: 'oikein',
-    skippedWord: 'ohitettu'
-  },
-  en: {
-    subtitle: 'Describe it with words',
-    categories: 'Categories',
-    roundTime: 'Round time',
-    teamCount: 'Teams',
-    teams: 'teams',
-    start: 'Start game',
-    startInfo: 'Describe the word — you cannot say the word itself!',
-    all: 'ALL',
-    correct: '✓ Correct',
-    skip: '↷ Skip',
-    endRound: 'End round',
-    nextTeam: 'Next team →',
-    endGame: 'End game',
-    playAgain: 'Play again',
-    gameOver: 'Game over',
-    finalScore: 'Final scores',
-    winner: '🏆 Winner',
-    points: 'points',
-    roundOver: 'Round over',
-    roundPoints: 'Points this round',
-    correctWord: 'correct',
-    skippedWord: 'skipped'
-  }
-};
+function startChRound(teamIndex) {
+  chState.currentTeam=teamIndex;chState.deck=buildCharadesDeck();chState.currentWordIndex=0;
+  chState.roundCorrect=0;chState.roundSkipped=0;document.getElementById('charades-chips').innerHTML='';
+  document.getElementById('charades-team-badge').textContent=chState.teams[teamIndex].name;
+  chState.timeLeft=chState.timerSeconds;
+  document.getElementById('charades-timer').textContent=chState.timeLeft;
+  updateChRing(chState.timeLeft,chState.timerSeconds);
+  chState.roundActive=true;
+  showCharadesWord();showScreen('screen-charades');
+  clearInterval(chState.timerInterval);
+  chState.timerInterval=setInterval(()=>{
+    chState.timeLeft--;
+    document.getElementById('charades-timer').textContent=chState.timeLeft;
+    updateChRing(chState.timeLeft,chState.timerSeconds);
+    if(chState.timeLeft<=0){clearInterval(chState.timerInterval);chState.roundActive=false;endChRound();}
+  },1000);
+}
 
-function updateLanguage(lang) {
-  currentLang = lang;
-  const t = translations[lang];
+function endChRound() {
+  clearInterval(chState.timerInterval);chState.roundActive=false;
+  chState.teams[chState.currentTeam].score+=chState.roundCorrect;
+  const next=(chState.currentTeam+1)%chState.teams.length;
+  alert((currentLang==='fi'?`${chState.teams[chState.currentTeam].name}: ${chState.roundCorrect} oikein\n\nSeuraava: ${chState.teams[next].name}`:`${chState.teams[chState.currentTeam].name}: ${chState.roundCorrect} correct\n\nNext: ${chState.teams[next].name}`));
+  startChRound(next);
+}
 
-  document.querySelector('.logo-sub').textContent = t.subtitle;
-  document.querySelectorAll('.settings-label')[0].textContent = t.categories;
-  document.querySelectorAll('.settings-label')[1].textContent = t.roundTime;
-  document.querySelectorAll('.settings-label')[2].textContent = t.teamCount;
+document.getElementById('charades-correct').addEventListener('click',()=>{if(!chState.roundActive)return;chState.roundCorrect++;addChip('charades-chips','correct');chState.currentWordIndex++;showCharadesWord();});
+document.getElementById('charades-skip').addEventListener('click',()=>{if(!chState.roundActive)return;chState.roundSkipped++;addChip('charades-chips','skipped');chState.currentWordIndex++;showCharadesWord();});
+document.getElementById('charades-end').addEventListener('click',()=>endChRound());
 
-  document.getElementById('btn-start').textContent = t.start;
-  document.getElementById('start-info').textContent = t.startInfo;
-  document.getElementById('btn-correct').textContent = t.correct;
-  document.getElementById('btn-skip').textContent = t.skip;
-  document.getElementById('btn-end-round').textContent = t.endRound;
-  document.getElementById('btn-next-team').textContent = t.nextTeam;
-  document.getElementById('btn-end-game').textContent = t.endGame;
-  document.getElementById('btn-restart').textContent = t.playAgain;
+// ======================== NHIE ========================
+function startNhie() {
+  nhieDeck=shuffle([...nhieCards[currentLang]]);nhieIndex=0;showNhieCard();showScreen('screen-nhie');
+}
 
-  document.querySelector('#screen-end .logo-sub').textContent = t.gameOver;
-  document.querySelector('#screen-end .logo-title').textContent = t.finalScore;
-  document.querySelector('.podium-label').textContent = t.winner;
+function showNhieCard() {
+  const total=nhieDeck.length;
+  if(nhieIndex>=total){nhieIndex=0;nhieDeck=shuffle([...nhieCards[currentLang]]);}
+  document.getElementById('nhie-text').textContent=nhieDeck[nhieIndex];
+  document.getElementById('nhie-counter').textContent=`${nhieIndex+1} / ${total}`;
+  document.getElementById('nhie-progress').style.width=`${((nhieIndex)/total)*100}%`;
+}
 
-  document.querySelector('#screen-result .logo-sub').textContent = t.roundOver;
-  document.querySelector('#screen-result .settings-label').textContent = t.roundPoints;
+document.getElementById('nhie-next').addEventListener('click',()=>{nhieIndex++;showNhieCard();});
 
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.classList.remove('active-lang');
-    if (btn.dataset.lang === lang) btn.classList.add('active-lang');
+// ======================== COMPLAINT ========================
+function startComplaint() {
+  complaintDeck=shuffle([...complaintCards[currentLang]]);complaintIndex=0;showComplaintCard();showScreen('screen-complaint');
+}
+
+function showComplaintCard() {
+  const total=complaintDeck.length;
+  if(complaintIndex>=total){complaintIndex=0;complaintDeck=shuffle([...complaintCards[currentLang]]);}
+  document.getElementById('complaint-text').textContent=complaintDeck[complaintIndex];
+  document.getElementById('complaint-counter').textContent=`${complaintIndex+1} / ${total}`;
+  document.getElementById('complaint-progress').style.width=`${((complaintIndex)/total)*100}%`;
+}
+
+document.getElementById('complaint-next').addEventListener('click',()=>{complaintIndex++;showComplaintCard();});
+
+// ======================== HOT SEAT ========================
+function renderHsNameList() {
+  const list=document.getElementById('hs-name-list');list.innerHTML='';
+  hsPlayers.forEach((name,i)=>{
+    const row=document.createElement('div');row.style.cssText='display:flex;gap:0.5rem;align-items:center;';
+    row.innerHTML=`<input class="team-name-input" style="flex:1;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:0.5rem;" value="${name}" maxlength="20" oninput="hsPlayers[${i}]=this.value">
+      <button style="background:rgba(185,74,44,0.2);border:1px solid rgba(185,74,44,0.3);color:#e08070;border-radius:8px;padding:0.5rem 0.7rem;cursor:pointer;font-size:0.9rem;" onclick="removeHsPlayer(${i})">✕</button>`;
+    list.appendChild(row);
   });
 }
 
-document.addEventListener('click', (e) => {
-  if (e.target.classList.contains('lang-btn')) {
-    updateLanguage(e.target.dataset.lang);
-  }
+function removeHsPlayer(i) {
+  if(hsPlayers.length<=2)return;
+  hsPlayers.splice(i,1);renderHsNameList();
+}
+
+document.getElementById('hs-add-player').addEventListener('click',()=>{
+  if(hsPlayers.length>=8)return;
+  hsPlayers.push(currentLang==='fi'?`Pelaaja ${hsPlayers.length+1}`:`Player ${hsPlayers.length+1}`);
+  renderHsNameList();
 });
 
-
-
-// ======================== MENU ========================
-document.getElementById('btn-open-alias').addEventListener('click', () => {
-  showScreen('screen-start');
+document.getElementById('btn-hs-start').addEventListener('click',()=>{
+  hsPlayers=hsPlayers.map((n,i)=>{const inp=document.querySelector(`#hs-name-list input:nth-of-type(${i+1})`);return inp?inp.value.trim()||n:n;});
+  hsDeck=shuffle([...hotSeatQuestions[currentLang]]);hsIndex=0;
+  showHsQuestion();showScreen('screen-hotseat');
 });
 
-document.getElementById('btn-open-quiz').addEventListener('click', () => {
-  showScreen('screen-quiz');
+function showHsQuestion() {
+  const total=hsDeck.length;
+  if(hsIndex>=total){hsIndex=0;hsDeck=shuffle([...hotSeatQuestions[currentLang]]);}
+  document.getElementById('hs-question').textContent=hsDeck[hsIndex];
+  document.getElementById('hs-counter').textContent=`${hsIndex+1} / ${total}`;
+  document.getElementById('hs-progress').style.width=`${((hsIndex)/total)*100}%`;
+  // render player chips
+  const chips=document.getElementById('hs-player-chips');chips.innerHTML='';
+  hsPlayers.forEach(name=>{
+    const chip=document.createElement('button');chip.className='player-chip';chip.textContent=name;
+    chip.addEventListener('click',()=>{chip.classList.toggle('voted');});
+    chips.appendChild(chip);
+  });
+}
+
+document.getElementById('hs-next').addEventListener('click',()=>{
+  // clear votes
+  document.querySelectorAll('.player-chip').forEach(c=>c.classList.remove('voted'));
+  hsIndex++;showHsQuestion();
 });
 
-document.getElementById('btn-back-menu').addEventListener('click', () => {
-  showScreen('screen-menu');
+// ======================== MENU NAVIGATION ========================
+document.getElementById('btn-open-alias').addEventListener('click',()=>showScreen('screen-start'));
+document.getElementById('btn-open-charades').addEventListener('click',()=>{renderChTeamGrid();showScreen('screen-charades-setup');});
+document.getElementById('btn-open-nhie').addEventListener('click',()=>startNhie());
+document.getElementById('btn-open-complaint').addEventListener('click',()=>startComplaint());
+document.getElementById('btn-open-hotseat').addEventListener('click',()=>{renderHsNameList();showScreen('screen-hotseat-setup');});
+
+document.querySelectorAll('.back-to-menu').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    clearInterval(state.timerInterval);clearInterval(chState.timerInterval);
+    showScreen('screen-menu');
+  });
 });
 
-document.getElementById('btn-quiz-back').addEventListener('click', () => {
-  showScreen('screen-menu');
-});
-
-
-// Init
-renderTeamGrid();
-updateStartButton();
+// ======================== INIT ========================
+renderTeamGrid();renderChTeamGrid();renderHsNameList();
 updateLanguage('fi');
 </script>
-
 </body>
 </html>
