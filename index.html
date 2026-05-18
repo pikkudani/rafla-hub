@@ -88,10 +88,14 @@ body::before {
 .cat-toggle[data-cat="tarjoilija"] { border-color:rgba(200,146,42,0.5); color:var(--gold); }
 .cat-toggle[data-cat="baarimikko"] { border-color:rgba(212,143,160,0.5);color:#d48fa0; }
 .cat-toggle[data-cat="juomat"]     { border-color:rgba(212,168,32,0.5); color:var(--beer); }
+.cat-toggle[data-cat="annokset"]   { border-color:rgba(74,160,74,0.5);  color:#6bc96b; }
+.cat-toggle[data-cat="raaka"]      { border-color:rgba(160,100,200,0.5);color:#b87de0; }
 .cat-toggle.on[data-cat="kokki"]      { background:rgba(185,74,44,0.18);  border-color:var(--rust); color:#e08878; }
 .cat-toggle.on[data-cat="tarjoilija"] { background:rgba(200,146,42,0.18); border-color:var(--gold); color:var(--gold); }
 .cat-toggle.on[data-cat="baarimikko"] { background:rgba(212,143,160,0.18);border-color:#d48fa0;     color:#d48fa0; }
 .cat-toggle.on[data-cat="juomat"]     { background:rgba(212,168,32,0.18); border-color:var(--beer); color:var(--beer); }
+.cat-toggle.on[data-cat="annokset"]   { background:rgba(74,160,74,0.18);  border-color:#6bc96b;     color:#6bc96b; }
+.cat-toggle.on[data-cat="raaka"]      { background:rgba(160,100,200,0.18);border-color:#b87de0;     color:#b87de0; }
 .cat-toggle.on .check { background:currentColor; }
 .cat-toggle.on .check::after { content:'✓'; color:var(--ink); font-size:0.7rem; font-weight:700; }
 .cat-count { margin-left:auto; font-size:0.65rem; opacity:0.5; }
@@ -140,6 +144,8 @@ body::before {
 .word-cat-tag.tarjoilija { color:#a07010; }
 .word-cat-tag.baarimikko { color:var(--wine); }
 .word-cat-tag.juomat     { color:#9a6e00; }
+.word-cat-tag.annokset   { color:#2a7a2a; }
+.word-cat-tag.raaka      { color:#7a3aaa; }
 .word-main { font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;line-height:1.1; }
 .word-hint { font-size:0.78rem;color:rgba(26,16,8,0.45);font-style:italic;max-width:85%; }
 
@@ -284,10 +290,10 @@ button { touch-action:manipulation; }
     <span class="logo-title">Game Night</span>
     <div class="logo-divider">choose a game</div>
   </div>
-  <div style="display:flex;gap:0.5rem;justify-content:center;width:100%;flex-wrap:wrap;">
+  <div style="display:flex;gap:0.5rem;justify-content:center;width:100%;">
     <button class="btn-secondary lang-btn active-lang" data-lang="fi" style="width:auto;padding:0.5rem 1rem;">🇫🇮 Suomi</button>
     <button class="btn-secondary lang-btn"              data-lang="en" style="width:auto;padding:0.5rem 1rem;">🇬🇧 English</button>
-    <button class="btn-secondary" id="btn-install-help" style="width:auto;padding:0.5rem 1rem;" data-fi="📱 Asenna sovellus" data-en="📱 Install App">📱 Asenna sovellus</button>
+    <button class="btn-secondary" id="btn-install-help" style="width:auto;padding:0.5rem 1rem;" data-fi="📱 Asenna" data-en="📱 Install App">📱 Asenna</button>
   </div>
   <div class="menu-grid">
     <button class="menu-card" id="btn-open-alias">
@@ -413,6 +419,8 @@ button { touch-action:manipulation; }
       <button class="cat-toggle on" data-cat="tarjoilija"><span class="check"></span><span class="cat-label" data-fi="🍽 Tarjoilija" data-en="🍽 Service">🍽 Tarjoilija</span><span class="cat-count" id="count-tarjoilija"></span></button>
       <button class="cat-toggle on" data-cat="baarimikko"><span class="check"></span><span class="cat-label" data-fi="🍸 Baarimikko" data-en="🍸 Bar">🍸 Baarimikko</span><span class="cat-count" id="count-baarimikko"></span></button>
       <button class="cat-toggle on" data-cat="juomat"><span class="check"></span><span class="cat-label" data-fi="🍺 Juomat" data-en="🍺 Drinks">🍺 Juomat</span><span class="cat-count" id="count-juomat"></span></button>
+      <button class="cat-toggle on" data-cat="annokset"><span class="check"></span><span class="cat-label" data-fi="🍴 Annokset" data-en="🍴 Dishes">🍴 Annokset</span><span class="cat-count" id="count-annokset"></span></button>
+      <button class="cat-toggle on" data-cat="raaka"><span class="check"></span><span class="cat-label" data-fi="🧂 Raaka-aineet" data-en="🧂 Ingredients">🧂 Raaka-aineet</span><span class="cat-count" id="count-raaka"></span></button>
     </div>
   </div>
   <div class="settings-card">
@@ -634,7 +642,7 @@ const words = {
     { word:"Mise en place", hint:"Kaikki valmiiksi ennen kokkaamista" },
     { word:"Blanseerata",   hint:"Upottaa kiehuvaan veteen hetkeksi" },
     { word:"Redusoiminen",  hint:"Kastikkeen keittäminen kokoon" },
-    { word:"Julienn",       hint:"Ohuet tikkumaiset viipaleet" },
+    { word:"Julienne",       hint:"Ohuet tikkumaiset viipaleet" },
     { word:"Brunoise",      hint:"Erittäin pieneksi kuutioiksi leikkaaminen" },
     { word:"Roux",          hint:"Voin ja jauhon seos kastikkeeseen" },
     { word:"Temperoida",    hint:"Suklaan lämpötilojen hallinta" },
@@ -677,7 +685,7 @@ const words = {
     { word:"Korkkimaksu",    hint:"Maksu oman viinin tuomisesta ravintolaan" },
     { word:"Floor manager",  hint:"Salin esimies, joka koordinoi palvelua" },
     { word:"Kierros",        hint:"Yksi lenkki pöydistä tarkistamassa asiakkaat" },
-    { word:"Kansi",          hint:"Yksi asiakas = yksi tämä ravintolan kielellä" },
+    { word:"Kansi",          hint:"Yksi asiakas = yksi kansi, ravintolan ammattisanasto" },
     { word:"Bussaus",        hint:"Likaisten astioiden kerääminen pöydältä" },
     { word:"Ruokajono",      hint:"Odottavien asiakkaiden lista ovella" },
     { word:"Sivu-upsell",    hint:"Suosittele lisäke tai juoma pääruualle" },
@@ -718,7 +726,7 @@ const words = {
     { word:"Sandels",            hint:"Hartwallin olut, nimetty kenraalin mukaan" },
     { word:"Olvi",               hint:"Iisalmelainen panimoyritys ja sen perusolut" },
     { word:"III olut",           hint:"Kolmosen olut, yleisin anniskeluolut baarissa" },
-    { word:"Lonkero",            hint:"Hartwallin grappamix, Suomen kansallisjuoma" },
+    { word:"Lonkero",            hint:"Hartwallin gin-greippimix, Suomen kansallisjuoma" },
     { word:"Original Long Drink",hint:"Hartwallin klassinen greippigrappa tölkissä" },
     { word:"Nokian Panimo",      hint:"Nokialla sijaitseva suomalainen craft-panimo" },
     { word:"A. Le Coq",          hint:"Virolainen olut, suosittu Suomessa" },
@@ -762,8 +770,102 @@ const words = {
     { word:"Tanqueray",          hint:"Brittiläinen premium-gin, vihreä pullo" },
     { word:"Jose Cuervo",        hint:"Tunnetuin tequilamerkki maailmassa" },
     { word:"Malibu",             hint:"Kookosrommi, tropiikin maku" },
-    { word:"Sambuca",            hint:"Italialainen anisliköri, kahvipavut lasissa" },
+    { word:"Sambuca",            hint:"Italialainen anislikööri, kahvipavut lasissa" },
     { word:"Passoa",             hint:"Passionhedelmälikööri, punainen pullo" },
+  ],
+  annokset: [
+    // Alkuruuat
+    { word:"Lohikeitto",         hint:"Kermainen kalalientipohjainen suomalainen keitto" },
+    { word:"Sipulikeitto",       hint:"Ranskalainen klassikko, juustokuorrutus päällä" },
+    { word:"Bruschetta",         hint:"Paistettu leipäviipale, tomaatti ja basilika" },
+    { word:"Caesarsalaatti",     hint:"Roomainen salaatti, parmesaani ja krutongit" },
+    { word:"Camembert-lautanen", hint:"Lämmitetty ranskalainen pehmeä juusto" },
+    { word:"Caprese",            hint:"Tomaatti, mozzarella ja basilika" },
+    { word:"Carpaccio",          hint:"Ohueksi leikattu raaka liha tai kala" },
+    { word:"Katkarapucocktail",  hint:"Katkaravut kastikkeessa, vanhan ajan alkupala" },
+    { word:"Simpukat",           hint:"Sinisimpukat valkoviini-kermakastikkeessa" },
+    // Pääruuat liha
+    { word:"Wienerschnitzel",    hint:"Paneroitu vasikanleike, itävaltalainen klassikko" },
+    { word:"Entrecôte",          hint:"Ulkofileepihvi, usein tarjotaan medium" },
+    { word:"Fileepihvi",         hint:"Sisäfileestä leikattu, hienoin pihvilihaleikkaus" },
+    { word:"Karjalanpaisti",     hint:"Suomalainen uunipaisti, possu ja naudan sekoitus" },
+    { word:"Poronkäristys",      hint:"Lappilainen perinneruoka, poronliha ja muussi" },
+    { word:"Pulled pork",        hint:"Hidas uunipossu, hajotettu haarukalla" },
+    { word:"Ribeye",             hint:"Rasvainen pihvileikkaus, paljon makua" },
+    { word:"Rack of lamb",       hint:"Karitsan kyljysrivi, hienossa ravintolassa" },
+    { word:"Coq au vin",         hint:"Kana punaviinissä, ranskalainen haudutusruoka" },
+    { word:"Burgeri",            hint:"Jauhelihapihvi sämpylässä, ranskalaiset kylkeen" },
+    // Pääruuat kala
+    { word:"Lohifilee",          hint:"Paistettu tai uunilohi, ravintolan peruspilari" },
+    { word:"Gravlax",            hint:"Suolassa kypsennetty lohi, ei uunia tarvita" },
+    { word:"Hauki",              hint:"Suomalainen järvikala, usein täytettynä" },
+    { word:"Tuoresiika",         hint:"Järvikala, herkullinen paistettuna" },
+    { word:"Ahven",              hint:"Pieni makea järvikala, suosittu suomalaisessa keittiössä" },
+    { word:"Katkaraputortellini", hint:"Täytetty pastapussi äyriäistäytteellä" },
+    // Pasta & riisi
+    { word:"Carbonara",          hint:"Kermainen pasta, pekoni ja munankeltuainen" },
+    { word:"Bolognese",          hint:"Jauhelihakastike tomaatissa, klassinen pasta" },
+    { word:"Risotto",            hint:"Italialainen kermainen riisiruoka, hitaasti keitetty" },
+    { word:"Lasagne",            hint:"Kerrostettu pastauunivuoka" },
+    { word:"Penne arrabiata",    hint:"Tulinen tomaattipastan muoto, chilillä" },
+    // Kasvis
+    { word:"Halloumi",           hint:"Kyproslainen juusto, paistettuna rapea" },
+    { word:"Falafel",            hint:"Uppopaistettu kikhernetassu, välimerellistä" },
+    { word:"Parmigiana",         hint:"Italialainen munakoisouunivuoka" },
+    // Jälkiruuat
+    { word:"Crème brûlée",       hint:"Ranskalainen vaniljakreemi, pallosokerikerros päällä" },
+    { word:"Tiramisu",           hint:"Italialainen kahvijälkiruoka, mascarpone" },
+    { word:"Panna cotta",        hint:"Italialainen hyytelöity kermavanukasannos" },
+    { word:"Lavakaakku",         hint:"Suklaakakku jossa nestemäinen täyte sisällä" },
+    { word:"Cheesecake",         hint:"Juustokakku, tuore tai paistettu" },
+    { word:"Sorbet",             hint:"Hedelmäinen jäätelö ilman kermaa" },
+    { word:"Profiterole",        hint:"Täytetty tuulihattu, suklaakastike päällä" },
+    { word:"Pannacake",          hint:"Ohut lettu, hillon ja kermavaahdon kanssa" },
+  ],
+  raaka: [
+    // Yrtit & mausteet
+    { word:"Basilika",           hint:"Italialaisen keittiön tärkein yrtti, pizzalla" },
+    { word:"Korianteri",         hint:"Aasialaisen ja meksikolaisen ruuan yrtti, jakaa mielipiteet" },
+    { word:"Rosmariini",         hint:"Neulasmainen yrtti, sopii lampaan kanssa" },
+    { word:"Timjami",            hint:"Pieni pyöreälehtinen yrtti, liha- ja kanaruuissa" },
+    { word:"Estragoni",          hint:"Ranskalainen yrtti, béarnaise-kastikkeessa" },
+    { word:"Kardemumma",         hint:"Skandinaavisten pullien mauste, myös kahvissa" },
+    { word:"Sumakki",            hint:"Tummanpunainen hapan mauste, lähi-idästä" },
+    { word:"Safran",             hint:"Maailman kallein mauste, värjää ruuan keltaiseksi" },
+    { word:"Kurkuma",            hint:"Keltainen juurimauste, myös antioksidantti" },
+    { word:"Cayennepippuri",     hint:"Tulinen punainen jauhemauste" },
+    { word:"Tähtianis",          hint:"Tähden muotoinen mauste, lakritsimainen maku" },
+    { word:"Muskottipähkinä",    hint:"Raastetaan kastikkeisiin ja bechameliin" },
+    { word:"Neilikka",           hint:"Kukkasilmumauste, jouluinen aromi" },
+    { word:"Vanilja",            hint:"Jälkiruokien kuningatar, musta palko" },
+    // Erikoisraaka-aineet
+    { word:"Tryffelit",          hint:"Maan alla kasvava arvokas sieni, sialla etsitty" },
+    { word:"Miso",               hint:"Japanilainen fermentoitu soijatahna" },
+    { word:"Tahini",             hint:"Seesaminsiemenistä tehty tahna, hummuksessa" },
+    { word:"Mirin",              hint:"Japanilainen makea riisiviini, kastikkeisiin" },
+    { word:"Worcestershire",     hint:"Brittiläinen hapan-makea kastike, pihveille" },
+    { word:"Kaprikset",          hint:"Pienet suolatut kukkasilmut, välimeren keittiö" },
+    { word:"Tamarindi",          hint:"Hapan trooppinen hedelmätahna, thairuuissa" },
+    { word:"Harissa",            hint:"Tulinen pohjoisafrikkalainen chilikastike" },
+    { word:"Ponzu",              hint:"Japanilainen sitruspohjainen soijakastike" },
+    { word:"Kimchi",             hint:"Korealainen fermentoitu mausteinen kaali" },
+    { word:"Anchovic",           hint:"Pieniä suolattuja kaloja, pizzalla ja salaateissa" },
+    // Raaka-aineet
+    { word:"Wagyu",              hint:"Japanilainen arvoliha, runsaasti marmoroitunut" },
+    { word:"Foie gras",          hint:"Rasvamaksa, herkullinen ja kiistelty ranskalaisherkkku" },
+    { word:"Burrata",            hint:"Italialainen juusto, pehmeä kermainen sisus" },
+    { word:"Ricotta",            hint:"Italialainen herajuusto, kevyt ja tuore" },
+    { word:"Pancetta",           hint:"Italialainen suolattu sianliha, bacon-sukulainen" },
+    { word:"Prosciutto",         hint:"Italialainen ilmakuivattu kinkku, ohuina siivuina" },
+    { word:"Chorizo",            hint:"Espanjalainen mausteinen sianlihaamakkara" },
+    { word:"Halloumi",           hint:"Kyproslainen juusto joka ei sula paistatessa" },
+    { word:"Mascarpone",         hint:"Italialainen kermainen tuorejuusto, tiramisussa" },
+    { word:"Crème fraîche",      hint:"Ranskalainen hapankermaa paksumpi kerma" },
+    { word:"Ghee",               hint:"Kirkastettu voi, intialaisessa keittiössä käytetty" },
+    { word:"Bonito-hiutaleet",   hint:"Kuivattu tonnikala-sukulainen, liehuu kuumuudessa" },
+    { word:"Panko",              hint:"Japanilainen karkea korppujauho, rapea paistaminen" },
+    { word:"Tapioka",            hint:"Kassavajuuresta saatu tärkkelys, bubble teassa" },
+    { word:"Yuzu",               hint:"Japanilainen sitrushedelma, intensiivinen aromi" },
   ],
 };
 
@@ -778,12 +880,12 @@ const nhieCards = {
     "En ole koskaan tullut töihin krapulaisena",
     "En ole koskaan valehdellut asiakkaalle ruoasta",
     "En ole koskaan syönyt asiakkaan jättämää ruokaa",
-    "En ole koskaan rikkoutunut vuoron aikana itkemään",
+    "En ole koskaan alkanut itkeä kesken vuoron",
     "En ole koskaan antanut ilmaisen juoman vain koska asiakas oli kaunis",
     "En ole koskaan myöhästynyt vuorosta",
-    "En ole koskaan rikkonut lasia kiiruhteessani",
+    "En ole koskaan rikkonut lasia kiireessäni",
     "En ole koskaan unohtanut tuoda laskun",
-    "En ole koskaan valehdellut erikoisruuan aineosista",
+    "En ole koskaan valehdellut erikoisruuan ainesosista",
     "En ole koskaan mennyt piiloon vaikean asiakkaan takia",
     "En ole koskaan laskenut tippien määrää kesken vuoron",
     "En ole koskaan käyttänyt puhelinta kylmiössä piilossa",
@@ -791,18 +893,18 @@ const nhieCards = {
     "En ole koskaan kirjoittanut tilauksen väärin niin, että kokki raivostui",
     "En ole koskaan kadottanut tilauslappua",
     "En ole koskaan vahingossa tarjoillut alkoholia alaikäiselle",
-    "En ole koskaan solminut asiakkaan kanssa flirttisuhteen",
+    "En ole koskaan flirtaillut asiakkaan kanssa",
     "En ole koskaan varastanut ranskalaisperunoita keittiöstä",
     "En ole koskaan esittänyt sairastavani, jotta pääsisin vuorosta",
-    "En ole koskaan syyskiinnittynyt asiakkaaseen enemmän kuin pitäisi",
+    "En ole koskaan kiintynyt kanta-asiakkaaseen enemmän kuin pitäisi",
     "En ole koskaan rikkonut kahvakupin kahvaa kantaessani",
     "En ole koskaan sanonut 'ei ongelmaa' tarkoittaen 'syvä ongelma'",
-    "En ole koskaan epähuomiossa kaatunut tarjotin päällä",
+    "En ole koskaan kompastunut tarjotin kädessä",
     "En ole koskaan lähettänyt tekstiviestiä kollegalle saman pöydän toisesta puolelta",
     "En ole koskaan väittänyt jokin ruoka olevan loppu, vaikka sitä oli",
     "En ole koskaan tarjoillut viiniä väärälle pöydälle",
     "En ole koskaan ottanut toisen tipin omaan taskuun",
-    "En ole koskaan väittänyt olevani allerginen ruoalle, jota en halunnut syödä työvuororuoaksi",
+    "En ole koskaan väittänyt olevani allerginen ruoalle, jota en halunnut syödä henkilökunnan aterialla",
     "En ole koskaan hukannut kynää kesken vuoron",
     "En ole koskaan koputtanut suolakelloa lattialle",
     "En ole koskaan vastannut asiakkaan kysymykseen 'en tiedä' ja jäänyt siihen",
@@ -873,20 +975,20 @@ const complaintCards = {
     "WC oli liian puhdas. Epäluonnollinen.",
     "Annos näytti paremmalta kuvassa.",
     "Lautanen oli liian pyöreä.",
-    "Ravintola on liian ravintola-mainen.",
+    "Ravintola on liian ravintolamainen.",
     "Tilasin vegaanin annoksen mutta se ei maistu lihalta.",
-    "Vino oli liian viinimäinen.",
+    "Viini oli liian viinimäinen.",
     "Ketsuppi oli pullossa eikä lasissa.",
     "Servietti oli taiteltuna väärin.",
     "Ikkuna oli liian kirkas. Aurinko häiritsi.",
     "Annos loppui kun söin sen.",
     "Kokki ei tullut tervehtimään minua.",
     "Menussa on liikaa vaihtoehtoja. En osaa valita.",
-    "Maksoin laskun ja rahat on nyt poissa.",
+    "Maksoin laskun ja rahat ovat nyt poissa.",
     "Ruoka maistuu ruoalta.",
     "Pöytä oli liian lähellä toista pöytää.",
-    "Jälkiruoka oli liian jälkiruoka-mainen.",
-    "Tarjoilija muisti allergiaksi kysytty aiemmin. Tuntui tungettelevalta.",
+    "Jälkiruoka oli liian jälkiruokamainen.",
+    "Tarjoilija muisti aiemmin kysymäni allergian. Tuntui tungettelevalta.",
     "Kahvi oli kuuma. Minulla on kiire jäähdyttää se.",
   ],
   en: [
@@ -950,10 +1052,10 @@ const hotSeatQuestions = {
     "Kuka ottaisi reklamaatiot kaikkein raskaiten?",
     "Kuka osaa kantaa eniten lautasia kerralla?",
     "Kuka selviäisi parhaiten hankalasta asiakkaasta?",
-    "Kuka on todennäköisin kandidaatti vuoromestarille?",
+    "Kuka meistä olisi seuraava vuoromestari?",
     "Kuka unohtaisi ottaa esiliinansa pois ennen WC:hen menoa?",
     "Kuka viettäisi eniten aikaa kylmiössä puhelimen kanssa?",
-    "Kuka alkaisi itkeä jos asiakas haukkui heidän ruokaansa?",
+    "Kuka alkaisi itkeä jos asiakas haukkuisi heidän ruokaansa?",
     "Kuka tekisi parasta ruokaa henkilökunnan aterialle?",
     "Kuka ensimmäisenä pyytäisi vapaapäivää jouluksi?",
   ],
@@ -993,7 +1095,7 @@ const hotSeatQuestions = {
 
 // ======================== STATE ========================
 const DEFAULT_NAMES = ['Tiimi 1','Tiimi 2','Tiimi 3','Tiimi 4'];
-const ALL_CATS = ['kokki','tarjoilija','baarimikko','juomat'];
+const ALL_CATS = ['kokki','tarjoilija','baarimikko','juomat','annokset','raaka'];
 let currentLang = 'fi';
 
 const translations = {
@@ -1049,15 +1151,12 @@ let chState = {
 
 let nhieIndex = 0;
 let nhieDeck = [];
-let nhieUsedSet = new Set(); // Track used questions to prevent repeats
 
 let complaintIndex = 0;
 let complaintDeck = [];
-let complaintUsedSet = new Set(); // Track used questions to prevent repeats
 
 let hsIndex = 0;
 let hsDeck = [];
-let hsUsedSet = new Set(); // Track used questions to prevent repeats
 let hsPlayers = ['Pelaaja 1','Pelaaja 2'];
 
 // ======================== HELPERS ========================
@@ -1148,7 +1247,7 @@ document.addEventListener('click', e=>{
 });
 
 // ======================== ALIAS SETUP ========================
-['kokki','tarjoilija','baarimikko','juomat'].forEach(cat=>{
+['kokki','tarjoilija','baarimikko','juomat','annokset','raaka'].forEach(cat=>{
   const el=document.getElementById('count-'+cat);
   if(el) el.textContent=words[cat].length;
 });
@@ -1227,7 +1326,7 @@ function showWord() {
   document.getElementById('word-main').textContent=w.word;
   document.getElementById('word-hint').textContent=w.hint;
   const tag=document.getElementById('word-cat-tag');
-  const lbl=currentLang==='en'?{kokki:'👨‍🍳 Kitchen',tarjoilija:'🍽 Service',baarimikko:'🍸 Bar',juomat:'🍺 Drinks'}:{kokki:'👨‍🍳 Kokki',tarjoilija:'🍽 Tarjoilija',baarimikko:'🍸 Baarimikko',juomat:'🍺 Juomat'};
+  const lbl=currentLang==='en'?{kokki:'👨‍🍳 Kitchen',tarjoilija:'🍽 Service',baarimikko:'🍸 Bar',juomat:'🍺 Drinks',annokset:'🍴 Dishes',raaka:'🧂 Ingredients'}:{kokki:'👨‍🍳 Kokki',tarjoilija:'🍽 Tarjoilija',baarimikko:'🍸 Baarimikko',juomat:'🍺 Juomat',annokset:'🍴 Annokset',raaka:'🧂 Raaka-aineet'};
   tag.textContent=lbl[w.cat]||'';tag.className='word-cat-tag '+w.cat;
   const card=document.getElementById('word-card');
   card.style.opacity='0';card.style.transform='scale(0.96)';
@@ -1260,7 +1359,7 @@ function startNewRound(teamIndex) {
   state.currentTeam=teamIndex;state.deck=buildAliasDeck();state.currentWordIndex=0;
   state.roundCorrect=0;state.roundSkipped=0;document.getElementById('round-chips').innerHTML='';
   document.getElementById('current-team-badge').textContent=state.teams[teamIndex].name;
-  const catBadge={kokki:'KOKKI',tarjoilija:'TARJOILIJA',baarimikko:'BAARI',juomat:'JUOMAT'};
+  const catBadge={kokki:'KOKKI',tarjoilija:'TARJOILIJA',baarimikko:'BAARI',juomat:'JUOMAT',annokset:'ANNOKSET'};
   const activeLabels=ALL_CATS.filter(c=>state.activeCats.has(c)).map(c=>catBadge[c]);
   document.getElementById('cat-badge').textContent=activeLabels.length===4?translations[currentLang].all:activeLabels.join('\n');
   showWord();showScreen('screen-game');startTimer();
@@ -1313,7 +1412,7 @@ function updateChRing(timeLeft,total) {
 
 function showCharadesWord() {
   const w=chState.deck[chState.currentWordIndex%chState.deck.length];
-  const catLbl=currentLang==='en'?{kokki:'👨‍🍳 Kitchen',tarjoilija:'🍽 Service',baarimikko:'🍸 Bar',juomat:'🍺 Drinks'}:{kokki:'👨‍🍳 Kokki',tarjoilija:'🍽 Tarjoilija',baarimikko:'🍸 Baarimikko',juomat:'🍺 Juomat'};
+  const catLbl=currentLang==='en'?{kokki:'👨‍🍳 Kitchen',tarjoilija:'🍽 Service',baarimikko:'🍸 Bar',juomat:'🍺 Drinks',annokset:'🍴 Dishes'}:{kokki:'👨‍🍳 Kokki',tarjoilija:'🍽 Tarjoilija',baarimikko:'🍸 Baarimikko',juomat:'🍺 Juomat',annokset:'🍴 Annokset'};
   document.getElementById('charades-word').textContent=w.word;
   document.getElementById('charades-hint').textContent=w.hint;
   document.getElementById('charades-cat-tag').textContent=catLbl[w.cat]||'';
@@ -1356,7 +1455,6 @@ document.getElementById('charades-end').addEventListener('click',()=>endChRound(
 function startNhie() {
   nhieDeck = shuffle([...nhieCards[currentLang]]);
   nhieIndex = 0;
-  nhieUsedSet.clear();
   showNhieCard();
   showScreen('screen-nhie');
 }
@@ -1364,21 +1462,14 @@ function startNhie() {
 function showNhieCard() {
   const total = nhieDeck.length;
   
-  // If we've shown all questions, reshuffle and start over
   if(nhieIndex >= total) {
     nhieIndex = 0;
-    nhieUsedSet.clear();
     nhieDeck = shuffle([...nhieCards[currentLang]]);
   }
   
-  // Display current question
-  const question = nhieDeck[nhieIndex];
-  document.getElementById('nhie-text').textContent = question;
+  document.getElementById('nhie-text').textContent = nhieDeck[nhieIndex];
   document.getElementById('nhie-counter').textContent = `${nhieIndex + 1} / ${total}`;
   document.getElementById('nhie-progress').style.width = `${((nhieIndex) / total) * 100}%`;
-  
-  // Mark as used
-  nhieUsedSet.add(nhieIndex);
 }
 
 document.getElementById('nhie-next').addEventListener('click', () => {
@@ -1390,7 +1481,6 @@ document.getElementById('nhie-next').addEventListener('click', () => {
 function startComplaint() {
   complaintDeck = shuffle([...complaintCards[currentLang]]);
   complaintIndex = 0;
-  complaintUsedSet.clear();
   showComplaintCard();
   showScreen('screen-complaint');
 }
@@ -1398,21 +1488,14 @@ function startComplaint() {
 function showComplaintCard() {
   const total = complaintDeck.length;
   
-  // If we've shown all questions, reshuffle and start over
   if(complaintIndex >= total) {
     complaintIndex = 0;
-    complaintUsedSet.clear();
     complaintDeck = shuffle([...complaintCards[currentLang]]);
   }
   
-  // Display current question
-  const question = complaintDeck[complaintIndex];
-  document.getElementById('complaint-text').textContent = question;
+  document.getElementById('complaint-text').textContent = complaintDeck[complaintIndex];
   document.getElementById('complaint-counter').textContent = `${complaintIndex + 1} / ${total}`;
   document.getElementById('complaint-progress').style.width = `${((complaintIndex) / total) * 100}%`;
-  
-  // Mark as used
-  complaintUsedSet.add(complaintIndex);
 }
 
 document.getElementById('complaint-next').addEventListener('click', () => {
@@ -1445,30 +1528,21 @@ document.getElementById('hs-add-player').addEventListener('click',()=>{
 document.getElementById('btn-hs-start').addEventListener('click',()=>{
   hsPlayers=hsPlayers.map((n,i)=>{const inp=document.querySelector(`#hs-name-list input:nth-of-type(${i+1})`);return inp?inp.value.trim()||n:n;});
   hsDeck=shuffle([...hotSeatQuestions[currentLang]]);hsIndex=0;
-  hsUsedSet.clear();
   showHsQuestion();showScreen('screen-hotseat');
 });
 
 function showHsQuestion() {
   const total=hsDeck.length;
   
-  // If we've shown all questions, reshuffle and start over
   if(hsIndex>=total){
     hsIndex=0;
-    hsUsedSet.clear();
     hsDeck=shuffle([...hotSeatQuestions[currentLang]]);
   }
   
-  // Display current question
-  const question = hsDeck[hsIndex];
-  document.getElementById('hs-question').textContent=question;
+  document.getElementById('hs-question').textContent=hsDeck[hsIndex];
   document.getElementById('hs-counter').textContent=`${hsIndex+1} / ${total}`;
   document.getElementById('hs-progress').style.width=`${((hsIndex)/total)*100}%`;
   
-  // Mark as used
-  hsUsedSet.add(hsIndex);
-  
-  // render player chips
   const chips=document.getElementById('hs-player-chips');chips.innerHTML='';
   hsPlayers.forEach(name=>{
     const chip=document.createElement('button');chip.className='player-chip';chip.textContent=name;
