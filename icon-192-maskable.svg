@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="maskGrad192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1008;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0b0806;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Safe zone background -->
+  <rect width="192" height="192" fill="url(#maskGrad192)"/>
+  <!-- Center circle (safe zone for masking) -->
+  <circle cx="96" cy="96" r="76" fill="#c8922a"/>
+  <circle cx="96" cy="96" r="68" fill="#fdf6ec"/>
+  <circle cx="96" cy="96" r="32" fill="#c8922a"/>
+  <text x="96" y="104" font-size="42" font-weight="bold" text-anchor="middle" dominant-baseline="middle" fill="#fdf6ec" font-family="Playfair Display, serif">G</text>
+</svg>

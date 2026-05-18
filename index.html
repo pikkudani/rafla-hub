@@ -3,7 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#c8922a">
+<meta name="description" content="Fun party games for restaurant staff - Alias, Charades, Never Have I Ever, and more">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Game Night">
 <title>Restaurant Game Night</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -74,7 +82,7 @@ body::before {
 
 /* CATEGORY TOGGLES */
 .category-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; }
-.cat-toggle { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.9rem; border-radius:10px; border:1.5px solid; font-size:0.82rem; font-family:'DM Sans',sans-serif; font-weight:500; cursor:pointer; transition:all 0.18s; background:transparent; user-select:none; }
+.cat-toggle { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.9rem; border-radius:10px; border:1.5px solid; font-size:0.82rem; font-family:'DM Sans',sans-serif; font-weight:500; cursor:pointer; transition:all 0.18s; background:transparent; user-select:none;min-height:44px;touch-action:manipulation; }
 .cat-toggle .check { width:16px;height:16px;border-radius:4px;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.65rem;transition:background 0.15s; }
 .cat-toggle[data-cat="kokki"]      { border-color:rgba(185,74,44,0.5);  color:#d07060; }
 .cat-toggle[data-cat="tarjoilija"] { border-color:rgba(200,146,42,0.5); color:var(--gold); }
@@ -91,7 +99,7 @@ body::before {
 /* TIMER / TEAM COUNT */
 .timer-row { display:flex; align-items:center; gap:1rem; }
 .timer-val { font-family:'Playfair Display',serif; font-size:2rem; min-width:2.5rem; text-align:center; }
-.timer-btn,.team-count-btn { width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(200,146,42,0.4);background:transparent;color:var(--gold);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s; }
+.timer-btn,.team-count-btn { width:44px;height:44px;border-radius:50%;border:1.5px solid rgba(200,146,42,0.4);background:transparent;color:var(--gold);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;touch-action:manipulation; }
 .timer-btn:hover,.team-count-btn:hover { background:rgba(200,146,42,0.15); }
 .team-count-row { display:flex;align-items:center;gap:1rem; }
 .team-count-val { font-family:'Playfair Display',serif;font-size:2rem;min-width:1.5rem;text-align:center; }
@@ -104,11 +112,11 @@ body::before {
 .team-score { font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--gold); }
 
 /* BUTTONS */
-.btn-primary { background:var(--gold);color:var(--ink);border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.95rem;letter-spacing:0.05em;padding:0.8rem 1.5rem;cursor:pointer;width:100%;transition:transform 0.15s,opacity 0.15s; }
+.btn-primary { background:var(--gold);color:var(--ink);border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.95rem;letter-spacing:0.05em;padding:0.8rem 1.5rem;cursor:pointer;width:100%;transition:transform 0.15s,opacity 0.15s;min-height:44px;display:flex;align-items:center;justify-content:center; }
 .btn-primary:hover { opacity:0.9; transform:translateY(-1px); }
 .btn-primary:active { transform:translateY(0); }
 .btn-primary:disabled { opacity:0.4;cursor:default;transform:none; }
-.btn-secondary { background:transparent;color:var(--smoke);border:1px solid rgba(255,255,255,0.2);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.85rem;padding:0.7rem 1.5rem;cursor:pointer;transition:border-color 0.2s;width:100%; }
+.btn-secondary { background:transparent;color:var(--smoke);border:1px solid rgba(255,255,255,0.2);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.85rem;padding:0.7rem 1.5rem;cursor:pointer;transition:border-color 0.2s;width:100%;min-height:44px;display:flex;align-items:center;justify-content:center; }
 .btn-secondary:hover { border-color:rgba(255,255,255,0.4); }
 
 /* LANG BTNS */
@@ -137,8 +145,8 @@ body::before {
 
 /* ANSWER ROW */
 .answer-row { display:flex;gap:0.55rem;width:100%; }
-.btn-correct { flex:1;background:var(--sage);color:#fff;border:none;border-radius:14px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:1rem;padding:0.8rem;cursor:pointer;transition:opacity 0.15s;display:flex;align-items:center;justify-content:center;gap:0.4rem; }
-.btn-skip { flex:1;background:rgba(185,74,44,0.2);color:#e08070;border:1px solid rgba(185,74,44,0.3);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:0.9rem;padding:0.8rem;cursor:pointer;transition:opacity 0.15s;display:flex;align-items:center;justify-content:center;gap:0.4rem; }
+.btn-correct { flex:1;background:var(--sage);color:#fff;border:none;border-radius:14px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:1rem;padding:0.8rem;cursor:pointer;transition:opacity 0.15s;display:flex;align-items:center;justify-content:center;gap:0.4rem;min-height:48px; }
+.btn-skip { flex:1;background:rgba(185,74,44,0.2);color:#e08070;border:1px solid rgba(185,74,44,0.3);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:0.9rem;padding:0.8rem;cursor:pointer;transition:opacity 0.15s;display:flex;align-items:center;justify-content:center;gap:0.4rem;min-height:48px; }
 .btn-correct:hover,.btn-skip:hover { opacity:0.85; }
 .round-score-row { display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center; }
 .round-chip { padding:0.25rem 0.7rem;border-radius:999px;font-size:0.75rem;border:1px solid; }
@@ -173,7 +181,7 @@ body::before {
 
 /* HOT SEAT player chips */
 .player-chips { display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;width:100%; }
-.player-chip { padding:0.5rem 1rem;border-radius:999px;border:2px solid rgba(255,255,255,0.2);font-size:0.85rem;cursor:pointer;transition:all 0.15s;user-select:none; }
+.player-chip { padding:0.5rem 1rem;border-radius:999px;border:2px solid rgba(255,255,255,0.2);font-size:0.85rem;cursor:pointer;transition:all 0.15s;user-select:none;min-height:44px;display:flex;align-items:center;justify-content:center;min-width:80px; }
 .player-chip.voted { border-color:var(--gold);background:rgba(200,146,42,0.2);color:var(--gold); }
 
 /* NHIE drink indicator */
@@ -190,6 +198,79 @@ body::before {
   .word-card { min-height:115px;padding:1.2rem 1rem; }
   .btn-primary,.btn-secondary,.btn-correct,.btn-skip { padding-top:0.75rem;padding-bottom:0.75rem; }
 }
+
+/* ====== MOBILE RESPONSIVE IMPROVEMENTS ====== */
+/* Extra small screens (under 360px) */
+@media (max-width: 360px) {
+  body { padding: 0.5rem; }
+  .container { max-width: 100%; }
+  .logo-sub { font-size: 0.6rem; }
+  .logo-title { font-size: 2rem; }
+  .logo-divider::before, .logo-divider::after { width: 25px; }
+  .menu-card { padding: 0.9rem 0.6rem; }
+  .menu-card .mc-icon { font-size: 1.4rem; }
+  .menu-card .mc-title { font-size: 0.8rem; }
+  .menu-card .mc-desc { font-size: 0.65rem; }
+  .settings-card { padding: 0.7rem 0.8rem; }
+  .settings-label { font-size: 0.65rem; }
+  .btn-primary, .btn-secondary, .btn-correct, .btn-skip {
+    font-size: 0.85rem;
+    padding: 0.7rem 1rem;
+  }
+  .timer-btn, .team-count-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+  .timer-val, .team-count-val {
+    font-size: 1.6rem;
+  }
+  .big-card { padding: 1.5rem 1.2rem; }
+  .big-card-main { font-size: 1.2rem; }
+  .player-chips { gap: 0.35rem; }
+  .player-chip { padding: 0.4rem 0.8rem; font-size: 0.75rem; }
+}
+
+/* Small mobile screens (360px - 480px) */
+@media (max-width: 480px) {
+  .menu-grid { gap: 0.6rem; }
+  .category-grid { gap: 0.5rem; }
+  .cat-toggle { padding: 0.6rem 0.8rem; font-size: 0.75rem; }
+  .cat-toggle .check { width: 14px; height: 14px; }
+  .teams-grid { gap: 0.6rem; }
+  .team-card { padding: 0.7rem; }
+  .team-name-input { font-size: 0.75rem; }
+  .team-score { font-size: 1.2rem; }
+  .word-card { padding: 1rem; min-height: 110px; }
+  .word-main { font-size: 1.3rem; }
+  .answer-row { gap: 0.4rem; }
+  .btn-correct, .btn-skip { font-size: 0.85rem; padding: 0.7rem 0.5rem; }
+  .game-header { gap: 0.6rem; }
+  .timer-display { font-size: 1.2rem; }
+  .timer-ring-wrap { width: 60px; height: 60px; }
+  .big-card { padding: 1.2rem 1rem; }
+  .big-card-main { font-size: 1.15rem; }
+  .progress-bar { height: 3px; }
+  .info-small { font-size: 0.7rem; }
+  .player-chips { gap: 0.4rem; }
+  .player-chip { padding: 0.45rem 0.8rem; font-size: 0.8rem; }
+}
+
+/* Medium screens (480px - 768px) - Tablets */
+@media (min-width: 481px) and (max-width: 768px) {
+  .container { max-width: 500px; }
+  .menu-grid { gap: 0.8rem; }
+  .category-grid { gap: 0.7rem; }
+  .teams-grid { gap: 0.8rem; }
+  .word-card { padding: 1.3rem 1.1rem; }
+  .big-card { padding: 1.8rem 1.5rem; }
+}
+
+/* Large screens (768px+) - Desktop */
+@media (min-width: 769px) {
+  body { justify-content: center; }
+  .container { max-width: 600px; }
+}
 button { touch-action:manipulation; }
 </style>
 </head>
@@ -203,9 +284,10 @@ button { touch-action:manipulation; }
     <span class="logo-title">Game Night</span>
     <div class="logo-divider">choose a game</div>
   </div>
-  <div style="display:flex;gap:0.5rem;justify-content:center;width:100%;">
+  <div style="display:flex;gap:0.5rem;justify-content:center;width:100%;flex-wrap:wrap;">
     <button class="btn-secondary lang-btn active-lang" data-lang="fi" style="width:auto;padding:0.5rem 1rem;">🇫🇮 Suomi</button>
     <button class="btn-secondary lang-btn"              data-lang="en" style="width:auto;padding:0.5rem 1rem;">🇬🇧 English</button>
+    <button class="btn-secondary" id="btn-install-help" style="width:auto;padding:0.5rem 1rem;" data-fi="📱 Asenna sovellus" data-en="📱 Install App">📱 Asenna sovellus</button>
   </div>
   <div class="menu-grid">
     <button class="menu-card" id="btn-open-alias">
@@ -236,7 +318,88 @@ button { touch-action:manipulation; }
   </div>
 </div>
 
-<!-- ====== ALIAS: START ====== -->
+<!-- ====== INSTALL INSTRUCTIONS ====== -->
+<div class="screen" id="screen-install">
+  <div class="logo">
+    <span class="logo-sub" data-fi="Asenna sovellus" data-en="Install App">Asenna sovellus</span>
+    <span class="logo-title" style="font-size:2.5rem">📱</span>
+    <div class="logo-divider" id="install-subtitle" data-fi="Nopea ja helppo" data-en="Quick and easy">Nopea ja helppo</div>
+  </div>
+  
+  <!-- Android Instructions -->
+  <div id="install-android" style="display:none;">
+    <div class="settings-card">
+      <div class="settings-label" data-fi="Android-ohjeet" data-en="Android Instructions">Android-ohjeet</div>
+      <div style="font-size:0.9rem;color:rgba(255,255,255,0.8);line-height:1.6;">
+        <div style="margin-bottom:1rem;">
+          <span data-fi="Vaihe 1:" data-en="Step 1:">Vaihe 1:</span> 
+          <span data-fi="Avaa selaimen valikko (⋮)" data-en="Open browser menu (⋮)">Avaa selaimen valikko (⋮)</span>
+        </div>
+        <div style="margin-bottom:1rem;">
+          <span data-fi="Vaihe 2:" data-en="Step 2:">Vaihe 2:</span>
+          <span data-fi="Napauta 'Asenna sovellus'" data-en="Tap 'Install app'">Napauta 'Asenna sovellus'</span>
+        </div>
+        <div style="margin-bottom:1rem;">
+          <span data-fi="Vaihe 3:" data-en="Step 3:">Vaihe 3:</span>
+          <span data-fi="Napauta 'Asenna'" data-en="Tap 'Install'">Napauta 'Asenna'</span>
+        </div>
+        <div style="margin-bottom:1rem;padding:0.8rem;background:rgba(200,146,42,0.1);border-radius:8px;border-left:3px solid var(--gold);">
+          <span data-fi="💡 Sovellus ilmestyy kotinäyttöön ja toimii ilman internetiä!" data-en="💡 The app will appear on your home screen and works offline!">💡 Sovellus ilmestyy kotinäyttöön ja toimii ilman internetiä!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- iOS Instructions -->
+  <div id="install-ios" style="display:none;">
+    <div class="settings-card">
+      <div class="settings-label" data-fi="iOS / iPad -ohjeet" data-en="iOS / iPad Instructions">iOS / iPad -ohjeet</div>
+      <div style="font-size:0.9rem;color:rgba(255,255,255,0.8);line-height:1.6;">
+        <div style="margin-bottom:1rem;">
+          <span data-fi="Vaihe 1:" data-en="Step 1:">Vaihe 1:</span>
+          <span data-fi="Napauta jaa-painiketta (↗)" data-en="Tap share button (↗)">Napauta jaa-painiketta (↗)</span>
+        </div>
+        <div style="margin-bottom:1rem;">
+          <span data-fi="Vaihe 2:" data-en="Step 2:">Vaihe 2:</span>
+          <span data-fi="Vieritä alas ja napauta 'Lisää kotinäyttöön'" data-en="Scroll down and tap 'Add to Home Screen'">Vieritä alas ja napauta 'Lisää kotinäyttöön'</span>
+        </div>
+        <div style="margin-bottom:1rem;">
+          <span data-fi="Vaihe 3:" data-en="Step 3:">Vaihe 3:</span>
+          <span data-fi="Napauta 'Lisää'" data-en="Tap 'Add'">Napauta 'Lisää'</span>
+        </div>
+        <div style="margin-bottom:1rem;padding:0.8rem;background:rgba(200,146,42,0.1);border-radius:8px;border-left:3px solid var(--gold);">
+          <span data-fi="💡 Sovellus ilmestyy kotinäyttöön ja toimii ilman internetiä!" data-en="💡 The app will appear on your home screen and works offline!">💡 Sovellus ilmestyy kotinäyttöön ja toimii ilman internetiä!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Desktop Instructions -->
+  <div id="install-desktop" style="display:none;">
+    <div class="settings-card">
+      <div class="settings-label" data-fi="Tietokoneen ohjeet" data-en="Desktop Instructions">Tietokoneen ohjeet</div>
+      <div style="font-size:0.9rem;color:rgba(255,255,255,0.8);line-height:1.6;">
+        <div style="margin-bottom:1rem;">
+          <span data-fi="Vaihe 1:" data-en="Step 1:">Vaihe 1:</span>
+          <span data-fi="Katso osoitepalkista asennuspainiketta" data-en="Look for install button in address bar">Katso osoitepalkista asennuspainiketta</span>
+        </div>
+        <div style="margin-bottom:1rem;">
+          <span data-fi="Vaihe 2:" data-en="Step 2:">Vaihe 2:</span>
+          <span data-fi="Napauta asennuspainiketta (tai käytä valikko → Asenna)" data-en="Tap install button (or use menu → Install)">Napauta asennuspainiketta (tai käytä valikko → Asenna)</span>
+        </div>
+        <div style="margin-bottom:1rem;">
+          <span data-fi="Vaihe 3:" data-en="Step 3:">Vaihe 3:</span>
+          <span data-fi="Sovellus avautuu omassa ikkunassaan" data-en="App opens in standalone window">Sovellus avautuu omassa ikkunassaan</span>
+        </div>
+        <div style="margin-bottom:1rem;padding:0.8rem;background:rgba(200,146,42,0.1);border-radius:8px;border-left:3px solid var(--gold);">
+          <span data-fi="💡 Voit käynnistää pelin pöytäsi pikakuvakkeella!" data-en="💡 Launch the game from your desktop shortcut!">💡 Voit käynnistää pelin pöytäsi pikakuvakkeella!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-secondary back-to-menu">← <span data-fi="Valikko" data-en="Menu">Valikko</span></button>
+</div>
 <div class="screen" id="screen-start">
   <div class="logo">
     <span class="logo-sub" id="alias-sub">Selitä se sanoin</span>
@@ -886,10 +1049,15 @@ let chState = {
 
 let nhieIndex = 0;
 let nhieDeck = [];
+let nhieUsedSet = new Set(); // Track used questions to prevent repeats
+
 let complaintIndex = 0;
 let complaintDeck = [];
+let complaintUsedSet = new Set(); // Track used questions to prevent repeats
+
 let hsIndex = 0;
 let hsDeck = [];
+let hsUsedSet = new Set(); // Track used questions to prevent repeats
 let hsPlayers = ['Pelaaja 1','Pelaaja 2'];
 
 // ======================== HELPERS ========================
@@ -897,6 +1065,21 @@ function shuffle(arr) {
   let a=[...arr];
   for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
   return a;
+}
+
+function buildShuffledDeck(items) {
+  // Create a shuffled deck and track it
+  let shuffled = shuffle([...items]);
+  return shuffled;
+}
+
+function getNextDeckItem(deck, index, usedSet) {
+  // If we've gone through the whole deck, reset and reshuffle
+  if (index >= deck.length) {
+    usedSet.clear(); // Clear used items for next round
+    return { deck: shuffle([...deck]), index: 0, usedSet };
+  }
+  return { deck, index, usedSet };
 }
 function buildAliasDeck() {
   let pool=[];
@@ -1171,33 +1354,71 @@ document.getElementById('charades-end').addEventListener('click',()=>endChRound(
 
 // ======================== NHIE ========================
 function startNhie() {
-  nhieDeck=shuffle([...nhieCards[currentLang]]);nhieIndex=0;showNhieCard();showScreen('screen-nhie');
+  nhieDeck = shuffle([...nhieCards[currentLang]]);
+  nhieIndex = 0;
+  nhieUsedSet.clear();
+  showNhieCard();
+  showScreen('screen-nhie');
 }
 
 function showNhieCard() {
-  const total=nhieDeck.length;
-  if(nhieIndex>=total){nhieIndex=0;nhieDeck=shuffle([...nhieCards[currentLang]]);}
-  document.getElementById('nhie-text').textContent=nhieDeck[nhieIndex];
-  document.getElementById('nhie-counter').textContent=`${nhieIndex+1} / ${total}`;
-  document.getElementById('nhie-progress').style.width=`${((nhieIndex)/total)*100}%`;
+  const total = nhieDeck.length;
+  
+  // If we've shown all questions, reshuffle and start over
+  if(nhieIndex >= total) {
+    nhieIndex = 0;
+    nhieUsedSet.clear();
+    nhieDeck = shuffle([...nhieCards[currentLang]]);
+  }
+  
+  // Display current question
+  const question = nhieDeck[nhieIndex];
+  document.getElementById('nhie-text').textContent = question;
+  document.getElementById('nhie-counter').textContent = `${nhieIndex + 1} / ${total}`;
+  document.getElementById('nhie-progress').style.width = `${((nhieIndex) / total) * 100}%`;
+  
+  // Mark as used
+  nhieUsedSet.add(nhieIndex);
 }
 
-document.getElementById('nhie-next').addEventListener('click',()=>{nhieIndex++;showNhieCard();});
+document.getElementById('nhie-next').addEventListener('click', () => {
+  nhieIndex++;
+  showNhieCard();
+});
 
 // ======================== COMPLAINT ========================
 function startComplaint() {
-  complaintDeck=shuffle([...complaintCards[currentLang]]);complaintIndex=0;showComplaintCard();showScreen('screen-complaint');
+  complaintDeck = shuffle([...complaintCards[currentLang]]);
+  complaintIndex = 0;
+  complaintUsedSet.clear();
+  showComplaintCard();
+  showScreen('screen-complaint');
 }
 
 function showComplaintCard() {
-  const total=complaintDeck.length;
-  if(complaintIndex>=total){complaintIndex=0;complaintDeck=shuffle([...complaintCards[currentLang]]);}
-  document.getElementById('complaint-text').textContent=complaintDeck[complaintIndex];
-  document.getElementById('complaint-counter').textContent=`${complaintIndex+1} / ${total}`;
-  document.getElementById('complaint-progress').style.width=`${((complaintIndex)/total)*100}%`;
+  const total = complaintDeck.length;
+  
+  // If we've shown all questions, reshuffle and start over
+  if(complaintIndex >= total) {
+    complaintIndex = 0;
+    complaintUsedSet.clear();
+    complaintDeck = shuffle([...complaintCards[currentLang]]);
+  }
+  
+  // Display current question
+  const question = complaintDeck[complaintIndex];
+  document.getElementById('complaint-text').textContent = question;
+  document.getElementById('complaint-counter').textContent = `${complaintIndex + 1} / ${total}`;
+  document.getElementById('complaint-progress').style.width = `${((complaintIndex) / total) * 100}%`;
+  
+  // Mark as used
+  complaintUsedSet.add(complaintIndex);
 }
 
-document.getElementById('complaint-next').addEventListener('click',()=>{complaintIndex++;showComplaintCard();});
+document.getElementById('complaint-next').addEventListener('click', () => {
+  complaintIndex++;
+  showComplaintCard();
+});
 
 // ======================== HOT SEAT ========================
 function renderHsNameList() {
@@ -1224,15 +1445,29 @@ document.getElementById('hs-add-player').addEventListener('click',()=>{
 document.getElementById('btn-hs-start').addEventListener('click',()=>{
   hsPlayers=hsPlayers.map((n,i)=>{const inp=document.querySelector(`#hs-name-list input:nth-of-type(${i+1})`);return inp?inp.value.trim()||n:n;});
   hsDeck=shuffle([...hotSeatQuestions[currentLang]]);hsIndex=0;
+  hsUsedSet.clear();
   showHsQuestion();showScreen('screen-hotseat');
 });
 
 function showHsQuestion() {
   const total=hsDeck.length;
-  if(hsIndex>=total){hsIndex=0;hsDeck=shuffle([...hotSeatQuestions[currentLang]]);}
-  document.getElementById('hs-question').textContent=hsDeck[hsIndex];
+  
+  // If we've shown all questions, reshuffle and start over
+  if(hsIndex>=total){
+    hsIndex=0;
+    hsUsedSet.clear();
+    hsDeck=shuffle([...hotSeatQuestions[currentLang]]);
+  }
+  
+  // Display current question
+  const question = hsDeck[hsIndex];
+  document.getElementById('hs-question').textContent=question;
   document.getElementById('hs-counter').textContent=`${hsIndex+1} / ${total}`;
   document.getElementById('hs-progress').style.width=`${((hsIndex)/total)*100}%`;
+  
+  // Mark as used
+  hsUsedSet.add(hsIndex);
+  
   // render player chips
   const chips=document.getElementById('hs-player-chips');chips.innerHTML='';
   hsPlayers.forEach(name=>{
@@ -1255,6 +1490,11 @@ document.getElementById('btn-open-nhie').addEventListener('click',()=>startNhie(
 document.getElementById('btn-open-complaint').addEventListener('click',()=>startComplaint());
 document.getElementById('btn-open-hotseat').addEventListener('click',()=>{renderHsNameList();showScreen('screen-hotseat-setup');});
 
+document.getElementById('btn-install-help').addEventListener('click', () => {
+  showScreen('screen-install');
+  detectDeviceAndShowInstructions();
+});
+
 document.querySelectorAll('.back-to-menu').forEach(btn=>{
   btn.addEventListener('click',()=>{
     clearInterval(state.timerInterval);clearInterval(chState.timerInterval);
@@ -1262,9 +1502,82 @@ document.querySelectorAll('.back-to-menu').forEach(btn=>{
   });
 });
 
+// ======================== DEVICE DETECTION & INSTALL INSTRUCTIONS ========================
+function detectDevice() {
+  // iOS/iPad Detection
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  
+  // Android Detection
+  const isAndroid = /Android/.test(navigator.userAgent);
+  
+  // Windows/Mac Detection
+  const isWindows = /Windows/.test(navigator.userAgent);
+  const isMac = /Macintosh/.test(navigator.userAgent);
+  
+  // Mobile Detection
+  const isMobile = /Mobile|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+  
+  return {
+    isIOS,
+    isAndroid,
+    isWindows,
+    isMac,
+    isMobile,
+    type: isIOS ? 'ios' : isAndroid ? 'android' : isMobile ? 'mobile' : 'desktop'
+  };
+}
+
+function detectDeviceAndShowInstructions() {
+  const device = detectDevice();
+  
+  // Hide all instruction sections
+  document.getElementById('install-android').style.display = 'none';
+  document.getElementById('install-ios').style.display = 'none';
+  document.getElementById('install-desktop').style.display = 'none';
+  
+  // Show appropriate section based on device
+  if (device.isIOS) {
+    document.getElementById('install-ios').style.display = 'block';
+  } else if (device.isAndroid) {
+    document.getElementById('install-android').style.display = 'block';
+  } else {
+    document.getElementById('install-desktop').style.display = 'block';
+  }
+  
+  console.log('Device detected:', device.type);
+}
+
 // ======================== INIT ========================
 renderTeamGrid();renderChTeamGrid();renderHsNameList();
 updateLanguage('fi');
+
+// ======================== PWA SERVICE WORKER ========================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration => {
+        console.log('Service Worker registered:', registration);
+      })
+      .catch(error => {
+        console.log('Service Worker registration failed:', error);
+      });
+  });
+}
+
+// Handle install prompt for add to home screen
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  console.log('Install prompt available');
+});
+
+// Optional: Listen for app installation
+window.addEventListener('appinstalled', () => {
+  console.log('Game Night was installed as a PWA');
+  deferredPrompt = null;
+});
 </script>
 </body>
 </html>
