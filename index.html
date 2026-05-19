@@ -278,6 +278,68 @@ body::before {
   .container { max-width: 600px; }
 }
 button { touch-action:manipulation; }
+
+/* ====== EVENT CARD ====== */
+.event-card {
+  width: 100%;
+  background: rgba(200,146,42,0.07);
+  border: 1px solid rgba(200,146,42,0.3);
+  border-radius: 16px;
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  overflow: hidden;
+}
+.event-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+.event-card:hover { background: rgba(200,146,42,0.13); border-color: rgba(200,146,42,0.55); }
+.event-card-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.8;
+}
+.event-card-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.2;
+}
+.event-card-meta {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+.event-card-arrow {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gold);
+  opacity: 0.5;
+  font-size: 0.85rem;
+}
+.event-card-loading {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.3);
+  text-align: center;
+  padding: 0.5rem;
+}
 </style>
 </head>
 <body>
@@ -321,6 +383,11 @@ button { touch-action:manipulation; }
       <span class="mc-title">Hot Seat</span>
       <span class="mc-desc" data-fi="Kuka teistä olisi...?" data-en="Who among you would...?">Kuka teistä olisi...?</span>
     </button>
+  </div>
+
+  <!-- NEXT EVENT CARD -->
+  <div id="event-card-wrap" style="width:100%;">
+    <div class="event-card-loading">⏳ Ladataan tapahtumia...</div>
   </div>
 </div>
 
@@ -1622,9 +1689,87 @@ function detectDeviceAndShowInstructions() {
   console.log('Device detected:', device.type);
 }
 
+// ======================== EVENTS ========================
+const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSH9auBOsunzAfI2apVjgL_h2p6wM6MN4b0FePtaaxPbgGRTj1I44VqoVlQsvnGDtceLIZ6WOq_idUO/pub?output=csv';
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,''));
+  return lines.slice(1).map(line => {
+    const cols = [];
+    let cur = '', inQ = false;
+    for (let ch of line) {
+      if (ch === '"') inQ = !inQ;
+      else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+      else cur += ch;
+    }
+    cols.push(cur.trim());
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = (cols[i] || '').replace(/^"|"$/g,''));
+    return obj;
+  });
+}
+
+function parseEventDate(row) {
+  // Support formats: dd.mm.yyyy or yyyy-mm-dd
+  const raw = (row['Päivämäärä'] || row['Paivamaara'] || row['Date'] || '').trim();
+  if (!raw) return null;
+  let d;
+  if (/^\d{1,2}\.\d{1,2}\.\d{4}$/.test(raw)) {
+    const [day, month, year] = raw.split('.');
+    d = new Date(year, month - 1, day);
+  } else {
+    d = new Date(raw);
+  }
+  return isNaN(d) ? null : d;
+}
+
+function formatDate(d) {
+  const days = ['Su','Ma','Ti','Ke','To','Pe','La'];
+  const months = ['tam','hel','maa','huh','tou','kes','hei','elo','syy','lok','mar','jou'];
+  return `${days[d.getDay()]} ${d.getDate()}. ${months[d.getMonth()]}`;
+}
+
+async function loadNextEvent() {
+  const wrap = document.getElementById('event-card-wrap');
+  try {
+    const res = await fetch(SHEET_CSV);
+    const text = await res.text();
+    const rows = parseCSV(text);
+    const today = new Date(); today.setHours(0,0,0,0);
+    const upcoming = rows
+      .map(r => ({ ...r, _date: parseEventDate(r) }))
+      .filter(r => r._date && r._date >= today)
+      .sort((a,b) => a._date - b._date);
+
+    if (!upcoming.length) {
+      wrap.innerHTML = '';
+      return;
+    }
+    const ev = upcoming[0];
+    const name = ev['Nimi'] || ev['Name'] || 'Tapahtuma';
+    const aika = ev['Aika'] || ev['Time'] || '';
+    const paikka = ev['Paikka'] || ev['Location'] || '';
+    const dateStr = formatDate(ev._date);
+    const metaParts = [dateStr, aika, paikka].filter(Boolean);
+
+    wrap.innerHTML = `
+      <a class="event-card" href="kalenteri.html">
+        <span class="event-card-label">📅 Seuraava tapahtuma</span>
+        <span class="event-card-name">${name}</span>
+        <span class="event-card-meta">${metaParts.join(' · ')}</span>
+        <span class="event-card-arrow">→</span>
+      </a>`;
+  } catch(e) {
+    wrap.innerHTML = '';
+  }
+}
+
 // ======================== INIT ========================
 renderTeamGrid();renderChTeamGrid();renderHsNameList();
 updateLanguage('fi');
+loadNextEvent();
 
 // ======================== PWA SERVICE WORKER ========================
 if ('serviceWorker' in navigator) {
