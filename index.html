@@ -1694,11 +1694,11 @@ document.getElementById('btn-install-help').addEventListener('click', () => {
   detectDeviceAndShowInstructions();
 });
 
-document.querySelectorAll('.back-to-menu').forEach(btn=>{
-  btn.addEventListener('click',()=>{
+document.addEventListener('click', e => {
+  if (e.target.closest('.back-to-menu')) {
     clearInterval(state.timerInterval);clearInterval(chState.timerInterval);
     showScreen('screen-menu');
-  });
+  }
 });
 
 // ======================== DEVICE DETECTION & INSTALL INSTRUCTIONS ========================
@@ -1820,7 +1820,7 @@ async function loadNextEvent() {
         <span class="event-card-arrow">→</span>
       </a>`;
   } catch(e) {
-    wrap.innerHTML = '';
+    wrap.innerHTML = `<div class="event-card-loading">❌ Virhe: ${e.message}</div>`;
   }
 }
 
