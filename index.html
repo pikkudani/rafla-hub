@@ -348,14 +348,40 @@ button { touch-action:manipulation; }
 <!-- ====== MAIN MENU ====== -->
 <div class="screen active" id="screen-menu">
   <div class="logo">
-    <span class="logo-sub">Restaurant party games</span>
-    <span class="logo-title">Game Night</span>
-    <div class="logo-divider">choose a game</div>
+    <span class="logo-sub">Raflaklubi</span>
+    <span class="logo-title">Lahti</span>
+    <div class="logo-divider">henkilökunnan sovellus</div>
   </div>
   <div style="display:flex;gap:0.5rem;justify-content:center;width:100%;">
     <button class="btn-secondary lang-btn active-lang" data-lang="fi" style="width:auto;padding:0.5rem 1rem;">🇫🇮 Suomi</button>
     <button class="btn-secondary lang-btn"              data-lang="en" style="width:auto;padding:0.5rem 1rem;">🇬🇧 English</button>
     <button class="btn-secondary" id="btn-install-help" style="width:auto;padding:0.5rem 1rem;" data-fi="📱 Asenna" data-en="📱 Install App">📱 Asenna</button>
+  </div>
+
+  <!-- NEXT EVENT CARD -->
+  <div id="event-card-wrap" style="width:100%;">
+    <div class="event-card-loading">⏳ Ladataan tapahtumia...</div>
+  </div>
+
+  <!-- CALENDAR LINK -->
+  <a href="kalenteri.html" style="display:flex;align-items:center;justify-content:center;gap:0.5rem;width:100%;font-size:0.78rem;color:rgba(255,255,255,0.35);text-decoration:none;padding:0.2rem 0;transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">
+    📅 <span data-fi="Kaikki tapahtumat →" data-en="All events →">Kaikki tapahtumat →</span>
+  </a>
+
+  <!-- GAMES BUTTON -->
+  <button class="menu-card" id="btn-open-games" style="width:100%;">
+    <span class="mc-icon">🎮</span>
+    <span class="mc-title" data-fi="Pelit" data-en="Games">Pelit</span>
+    <span class="mc-desc" data-fi="Alias, Charades, Hot Seat ja muut" data-en="Alias, Charades, Hot Seat and more">Alias, Charades, Hot Seat ja muut</span>
+  </button>
+</div>
+
+<!-- ====== GAMES MENU ====== -->
+<div class="screen" id="screen-games">
+  <div class="logo">
+    <span class="logo-sub">Raflaklubi</span>
+    <span class="logo-title" style="font-size:2.5rem">🎮</span>
+    <div class="logo-divider" data-fi="valitse peli" data-en="choose a game">valitse peli</div>
   </div>
   <div class="menu-grid">
     <button class="menu-card" id="btn-open-alias">
@@ -384,11 +410,7 @@ button { touch-action:manipulation; }
       <span class="mc-desc" data-fi="Kuka teistä olisi...?" data-en="Who among you would...?">Kuka teistä olisi...?</span>
     </button>
   </div>
-
-  <!-- NEXT EVENT CARD -->
-  <div id="event-card-wrap" style="width:100%;">
-    <div class="event-card-loading">⏳ Ladataan tapahtumia...</div>
-  </div>
+  <button class="btn-secondary back-to-menu">← <span data-fi="Takaisin" data-en="Back">Takaisin</span></button>
 </div>
 
 <!-- ====== INSTALL INSTRUCTIONS ====== -->
@@ -597,6 +619,7 @@ button { touch-action:manipulation; }
   </div>
   <div class="round-score-row" id="charades-chips"></div>
   <button class="btn-secondary" id="charades-end">← <span data-fi="Lopeta kierros" data-en="End round">Lopeta kierros</span></button>
+  <button class="btn-secondary back-to-menu" style="font-size:0.8rem;opacity:0.5;">✕ <span data-fi="Lopeta peli" data-en="Quit game">Lopeta peli</span></button>
 </div>
 
 <!-- ====== CHARADES: SETUP ====== -->
@@ -1625,6 +1648,7 @@ document.getElementById('hs-next').addEventListener('click',()=>{
 });
 
 // ======================== MENU NAVIGATION ========================
+document.getElementById('btn-open-games').addEventListener('click',()=>showScreen('screen-games'));
 document.getElementById('btn-open-alias').addEventListener('click',()=>showScreen('screen-start'));
 document.getElementById('btn-open-charades').addEventListener('click',()=>{renderChTeamGrid();showScreen('screen-charades-setup');});
 document.getElementById('btn-open-nhie').addEventListener('click',()=>startNhie());
