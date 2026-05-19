@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#c8922a">
+<meta name="theme-color" content="#120d09">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="description" content="Fun party games for restaurant staff - Alias, Charades, Never Have I Ever, and more">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -379,11 +380,6 @@ button { touch-action:manipulation; }
     <span class="mc-title" data-fi="Pelit" data-en="Games">Pelit</span>
     <span class="mc-desc" data-fi="Alias, Charades, Hot Seat ja muut" data-en="Alias, Charades, Hot Seat and more">Alias, Charades, Hot Seat ja muut</span>
   </button>
-
-  <button class="menu-card" id="btn-open-yhteystiedot" style="width:100%;">
-    <span class="mc-icon">📞</span>
-    <span class="mc-title" data-fi="Yhteystiedot" data-en="Contact">Yhteystiedot</span>
-  </button>
 </div>
 
 <!-- ====== EDUT ====== -->
@@ -393,8 +389,8 @@ button { touch-action:manipulation; }
     <span class="logo-title" style="font-size:2.5rem">⭐</span>
     <div class="logo-divider">Edut jäsenille</div>
   </div>
-  <div class="settings-card" style="text-align:center;">
-    <p style="color:rgba(255,255,255,0.45);font-size:0.85rem;line-height:1.6;">Tähän tulee jäsenetuja. Lisää sisältö myöhemmin.</p>
+  <div id="edut-list" style="width:100%;display:flex;flex-direction:column;gap:0.7rem;">
+    <div class="event-card-loading">⏳ Ladataan etuja...</div>
   </div>
   <button class="btn-secondary back-to-menu">← <span data-fi="Takaisin" data-en="Back">Takaisin</span></button>
 </div>
@@ -1685,7 +1681,7 @@ document.getElementById('hs-next').addEventListener('click',()=>{
 
 // ======================== MENU NAVIGATION ========================
 document.getElementById('btn-open-games').addEventListener('click',()=>showScreen('screen-games'));
-document.getElementById('btn-open-edut').addEventListener('click',()=>showScreen('screen-edut'));
+document.getElementById('btn-open-edut').addEventListener('click',()=>{ showScreen('screen-edut'); loadEdut(); });
 document.getElementById('btn-open-yhteystiedot').addEventListener('click',()=>showScreen('screen-yhteystiedot'));
 document.getElementById('btn-open-alias').addEventListener('click',()=>showScreen('screen-start'));
 document.getElementById('btn-open-charades').addEventListener('click',()=>{renderChTeamGrid();showScreen('screen-charades-setup');});
@@ -1828,7 +1824,33 @@ async function loadNextEvent() {
   }
 }
 
-// ======================== INIT ========================
+async function loadEdut() {
+  const EDUT_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSH9auBOsunzAfI2apVjgL_h2p6wM6MN4b0FePtaaxPbgGRTj1I44VqoVlQsvnGDtceLIZ6WOq_idUO/pub?gid=1534017827&single=true&output=csv';
+  const list = document.getElementById('edut-list');
+  try {
+    const res = await fetch(EDUT_CSV);
+    const text = await res.text();
+    const rows = parseCSV(text);
+    if (!rows.length) {
+      list.innerHTML = '<div class="event-card-loading">Ei etuja vielä.</div>';
+      return;
+    }
+    list.innerHTML = rows.map(r => {
+      const otsikko = r['Otsikko'] || '';
+      const kuvaus = r['Kuvaus'] || '';
+      return `
+        <div class="event-card" style="cursor:default;">
+          <span class="event-card-label">⭐ Etu</span>
+          <span class="event-card-name">${otsikko}</span>
+          ${kuvaus ? `<span class="event-desc" style="font-size:0.8rem;color:rgba(255,255,255,0.5);margin-top:0.2rem;">${kuvaus}</span>` : ''}
+        </div>`;
+    }).join('');
+  } catch(e) {
+    list.innerHTML = '<div class="event-card-loading">Etuja ei voitu ladata.</div>';
+  }
+}
+
+
 renderTeamGrid();renderChTeamGrid();renderHsNameList();
 updateLanguage('fi');
 loadNextEvent();
