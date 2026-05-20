@@ -4,11 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#120d09">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="description" content="Fun party games for restaurant staff - Alias, Charades, Never Have I Ever, and more">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Game Night">
+<meta name="apple-mobile-web-app-title" content="Raflaklubi">
 <title>Restaurant Game Night</title>
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" type="image/png" href="/icon-192.png">
@@ -35,7 +33,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0.8rem;
+  padding: env(safe-area-inset-top, 0.8rem) 0.8rem 0.8rem;
   overflow-x: hidden;
 }
 body::before {
@@ -1551,9 +1549,29 @@ function startChRound(teamIndex) {
 function endChRound() {
   clearInterval(chState.timerInterval);chState.roundActive=false;
   chState.teams[chState.currentTeam].score+=chState.roundCorrect;
-  const next=(chState.currentTeam+1)%chState.teams.length;
-  alert((currentLang==='fi'?`${chState.teams[chState.currentTeam].name}: ${chState.roundCorrect} oikein\n\nSeuraava: ${chState.teams[next].name}`:`${chState.teams[chState.currentTeam].name}: ${chState.roundCorrect} correct\n\nNext: ${chState.teams[next].name}`));
-  startChRound(next);
+  const t=translations[currentLang];
+  document.getElementById('result-team-name').textContent=chState.teams[chState.currentTeam].name;
+  document.getElementById('result-pts').textContent=chState.roundCorrect;
+  document.getElementById('result-breakdown').textContent=`${chState.roundCorrect} ${t.correctWord} · ${chState.roundSkipped} ${t.skippedWord}`;
+  const resScores=document.getElementById('result-scores');resScores.innerHTML='';
+  chState.teams.forEach((tm,i)=>{
+    const el=document.createElement('div');el.className='team-card';if(i===chState.currentTeam)el.classList.add('active');
+    el.innerHTML=`<div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-bottom:0.3rem">${tm.name}</div><div class="team-score">${tm.score} p</div>`;
+    resScores.appendChild(el);
+  });
+  // Override next/end buttons for charades flow
+  const nextBtn=document.getElementById('btn-next-team');
+  const endBtn=document.getElementById('btn-end-game');
+  nextBtn.onclick=()=>{const next=(chState.currentTeam+1)%chState.teams.length;startChRound(next);};
+  endBtn.onclick=()=>{
+    const sorted=[...chState.teams].sort((a,b)=>b.score-a.score);
+    document.getElementById('winner-name').textContent=sorted[0].name;
+    document.getElementById('winner-score').textContent=sorted[0].score+' '+t.points;
+    const list=document.getElementById('final-scores-list');list.innerHTML='';
+    sorted.forEach((tm,i)=>{const row=document.createElement('div');row.className='score-row';row.innerHTML=`<span>${i+1}. ${tm.name}</span><span style="color:var(--gold)">${tm.score} p</span>`;list.appendChild(row);});
+    showScreen('screen-end');
+  };
+  showScreen('screen-result');
 }
 
 document.getElementById('charades-correct').addEventListener('click',()=>{if(!chState.roundActive)return;chState.roundCorrect++;addChip('charades-chips','correct');chState.currentWordIndex++;showCharadesWord();});
