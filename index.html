@@ -395,19 +395,6 @@ button { touch-action:manipulation; }
   <button class="btn-secondary back-to-menu">← <span data-fi="Takaisin" data-en="Back">Takaisin</span></button>
 </div>
 
-<!-- ====== YHTEYSTIEDOT ====== -->
-<div class="screen" id="screen-yhteystiedot">
-  <div class="logo">
-    <span class="logo-sub">Lahden Raflaklubi</span>
-    <span class="logo-title" style="font-size:2.5rem">📞</span>
-    <div class="logo-divider">Yhteystiedot</div>
-  </div>
-  <div class="settings-card" style="text-align:center;">
-    <p style="color:rgba(255,255,255,0.45);font-size:0.85rem;line-height:1.6;">Tähän tulee yhteystiedot. Lisää sisältö myöhemmin.</p>
-  </div>
-  <button class="btn-secondary back-to-menu">← <span data-fi="Takaisin" data-en="Back">Takaisin</span></button>
-</div>
-
 <!-- ====== GAMES MENU ====== -->
 <div class="screen" id="screen-games">
   <div class="logo">
@@ -1682,7 +1669,6 @@ document.getElementById('hs-next').addEventListener('click',()=>{
 // ======================== MENU NAVIGATION ========================
 document.getElementById('btn-open-games').addEventListener('click',()=>showScreen('screen-games'));
 document.getElementById('btn-open-edut').addEventListener('click',()=>{ showScreen('screen-edut'); loadEdut(); });
-document.getElementById('btn-open-yhteystiedot').addEventListener('click',()=>showScreen('screen-yhteystiedot'));
 document.getElementById('btn-open-alias').addEventListener('click',()=>showScreen('screen-start'));
 document.getElementById('btn-open-charades').addEventListener('click',()=>{renderChTeamGrid();showScreen('screen-charades-setup');});
 document.getElementById('btn-open-nhie').addEventListener('click',()=>startNhie());
